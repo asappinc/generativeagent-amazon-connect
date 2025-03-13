@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "redis": "^4.6.14"
+  },
+   "devDependencies": {
+    "@types/aws-lambda": "^8.10.140"
+   }
+}

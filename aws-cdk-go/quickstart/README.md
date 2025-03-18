@@ -1,4 +1,4 @@
-# Amazon Connect Flow integration with GenAgent Deployment
+# ASAPP GenerativeAgent integration with Amazon Connect - AWS CDK quickstart sample
 
 This guide provides an implementation of the ASAPP GenerativeAgent integration guide for Amazon Connect. 
 

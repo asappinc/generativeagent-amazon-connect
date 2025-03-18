@@ -1,0 +1,153 @@
+# Amazon Connect Flow integration with GenAgent Deployment
+
+This guide provides an implementation of the ASAPP GenerativeAgent integration guide for Amazon Connect. 
+
+> ## Prerequisites
+
+   MacOS with Homebrew installed.
+
+   Before you begin, make sure you have the following installed:
+
+   1. ### **Golang (v1.23)**  
+
+      Install Go v1.23:
+      ```bash
+      brew install go@1.23
+      ```
+
+      Check if Golang was installed correctly by running:
+      ```bash
+      go version
+      ```
+
+   2. ### **Node.js (v20)**  
+
+      To install Node.js v20, run:
+      ```bash
+      brew install node@20
+      ```
+
+      Check if Node.js was installed correctly by running:
+      ```bash
+      node -v
+      ```
+
+   3. ### **AWS CLI**
+
+      To install the AWS CLI, run:
+
+      ```bash
+      brew install awscli
+      ```
+
+      Check if AWS CLI was installed correctly by running:
+
+      ```bash
+      aws --version
+      ```
+
+   4. ### **AWS CDK (v2)**
+
+      To install the AWS CDK, run:
+
+      ```bash
+      npm install -g aws-cdk@2
+      ```
+
+      Check if AWS CDK was installed correctly by running:
+
+      ```bash
+      cdk --version
+      ```
+
+   5. ### **Install esbuild**
+
+      To build Lambda functions in JavaScript using the `awslambdanodejs` module, esbuild is required:
+
+      ```bash
+      npm install -g esbuild
+      ```
+
+      Check if esbuild was installed correctly by running:
+
+      ```bash
+      esbuild --version
+      ```
+
+<br />
+
+> ## Setup the environment
+
+   1. ### Configure your AWS credentials
+
+      ```bash
+      aws configure
+      ```
+
+   2. ### Complete the configuration file
+
+      Before deploying the infrastructure, you need to provide a valid configuration file by creating  `config.sample.json` file located at the root level of the project. This file provides necessary environment details, and must follow the structure outlined below:
+
+      ```json
+      {
+         "accountId": "",
+         "region": "",
+         "connectInstanceArn": "",
+         "asapp": {
+            "apiHost": "",
+            "apiId": "",
+            "apiSecret" : "",
+            "assumingRoleArn": ""
+         }
+      }
+      ```
+
+      | Property                | Description                                                                                              |
+      | ----------------------- | -------------------------------------------------------------------------------------------------------- |
+      | `accountId`             | Your AWS account ID.                                                                                     |
+      | `region`                | The AWS region where your Amazon Connect instance is hosted.                                             |
+      | `connectInstanceArn`    | The Amazon Resource Name (ARN) of your Amazon Connect instance that this setup is interacting with.      |
+      | `asapp.apiHost`         | Provided by ASAPP. The API host endpoint, which the system interacts with.                               |
+      | `asapp.apiId`           | Provided by ASAPP. The API ID for authentication and access to the API.                                  |
+      | `asapp.apiSecret`       | Provided by ASAPP. The API secret or authentication and access to the API.                               |
+      | `asapp.assumingRoleArn` | Provided by ASAPP. The ARN of the IAM role that your system will assume to interact with ASAPP services. |
+
+
+   3. ### Boostrap your CDK environment
+
+      Bootstrapping is the process of preparing your AWS environment for usage with the AWS Cloud Development Kit (AWS CDK).
+
+         ```bash
+         cdk bootstrap aws://<account-id>/<region>
+         ```
+
+      > This step is only required the first time you deploy CDK in a new AWS environment.
+
+<br />
+
+> ## Deploy the CDK stack
+
+   The `cdk deploy` command builds and deploys your AWS CloudFormation stack based on the provided CDK code. 
+   By default, running cdk deploy will deploy using `config.sample.json` you created above:
+   
+   ```shell
+   cdk deploy
+   ```
+   
+   Multiple environments (contexts) are supported with default context set in `cdk.json` to `sample`. The configuration file name pattern is ```config.<envName>.json```. If you wish to use multiple configuration file, just create a different configuration file named ```config.<envName>.json``` and specify ```--context <envName>``` as parameter for `cdk deploy`.
+
+   ```shell
+   cdk deploy --context envName=<envName>
+   ```
+   
+> <b>Important:</b> Once deployment is complete, CDK will output some values to the terminal. Copy those values and provide them to ASAPP in order to get the proper permissions granted for your infrastructure to connect to ASAPP services.
+
+<br />
+
+> ## Destroy the CDK stack
+
+   The `cdk destroy` command removes all the resources provisioned by the CDK code.
+
+      cdk destroy
+
+   > <b>Important:</b> Make sure to destroy the stack when you're finished with the infrastructure to prevent unnecessary costs.

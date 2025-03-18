@@ -1,0 +1,16 @@
+package config
+
+type AsappConfig struct { // Asapp provided variables
+	ApiHost         string `config:"asapp-apiHost,required"`
+	ApiId           string `config:"asapp-apiId,required"`
+	ApiSecret       string `config:"asapp-apiSecret,required"`
+	AssumingRoleArn string `config:"asapp-assumingRoleArn,required"`
+}
+
+type Config struct {
+	AccountId          string `config:"accountId,required"`
+	Region             string `config:"region,required"`
+	ConnectInstanceArn string `config:"connectInstanceArn,required"`
+
+	Asapp AsappConfig
+}

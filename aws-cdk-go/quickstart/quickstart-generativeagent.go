@@ -162,7 +162,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 				Action:  jsii.String("CreatePrompt"),
 				Parameters: map[string]interface{}{
 					"InstanceId":  jsii.String(cfg.ConnectInstanceArn),
-					"Name":        jsii.String("asappBeepBop2"),
+					"Name":        jsii.String("asappBeepBop"),
 					"S3Uri":       beepbopUrl,
 					"Description": jsii.String("Short BeepBop no silence"),
 				},
@@ -196,7 +196,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 				Action:  jsii.String("CreatePrompt"),
 				Parameters: map[string]interface{}{
 					"InstanceId":  jsii.String(cfg.ConnectInstanceArn),
-					"Name":        jsii.String("asappSilence1second2"),
+					"Name":        jsii.String("asappSilence1second"),
 					"S3Uri":       silence1secondUrl,
 					"Description": jsii.String("One second silence"),
 				},
@@ -230,7 +230,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 				Action:  jsii.String("CreatePrompt"),
 				Parameters: map[string]interface{}{
 					"InstanceId":  jsii.String(cfg.ConnectInstanceArn),
-					"Name":        jsii.String("asappSilence400ms2"),
+					"Name":        jsii.String("asappSilence400ms"),
 					"S3Uri":       silence400msUrl,
 					"Description": jsii.String("Silence for 400ms"),
 				},

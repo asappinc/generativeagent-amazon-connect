@@ -66,7 +66,7 @@
           "isFriendlyName": true,
           "parameters": {
             "LambdaFunctionARN": {
-              "displayName": "mg-amazonconnect-genagent-engage"
+              "displayName": "generativeagent-quickstart-lambda-genagent-engage"
             }
           },
           "dynamicMetadata": {}
@@ -228,7 +228,7 @@
           "isFriendlyName": true,
           "parameters": {
             "LambdaFunctionARN": {
-              "displayName": "mg-amazonconnect-genagent-pullaction"
+              "displayName": "generativeagent-quickstart-lambda-pullaction"
             },
             "LambdaInvocationAttributes": {
               "companyMarker": {

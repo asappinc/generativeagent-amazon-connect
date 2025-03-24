@@ -1,0 +1,14 @@
+{
+    "accountId": "",
+    "region": "",
+    "connectInstanceArn": "",
+    "objectPrefix": "generativeagent-quickstart-",
+    "asapp": {
+        "apiHost": "",
+        "apiId": "",
+        "apiSecret": "",
+        "assumingRoleArn": ""
+    },
+    "attributesToInputVariablesMap": {},
+    "outputVariablesToAttributesMap": {}
+}

@@ -1,1123 +1,1164 @@
 {
-    "Version": "2019-10-30",
-    "StartAction": "2d84e0d3-9804-4c51-b95c-c0dec5230c71",
-    "Metadata": {
-      "entryPointPosition": {
-        "x": 40,
-        "y": 40
+  "Version": "2019-10-30",
+  "StartAction": "2d84e0d3-9804-4c51-b95c-c0dec5230c71",
+  "Metadata": {
+    "entryPointPosition": {
+      "x": 40,
+      "y": 40
+    },
+    "ActionMetadata": {
+      "2d84e0d3-9804-4c51-b95c-c0dec5230c71": {
+        "position": {
+          "x": 188.8,
+          "y": 38.4
+        },
+        "conditions": [],
+        "conditionMetadata": [
+          {
+            "id": "25342db1-52d9-4180-97f0-81f0819659fc",
+            "operator": {
+              "name": "Contains",
+              "value": "Contains",
+              "shortDisplay": "contains"
+            },
+            "value": "arn:aws"
+          }
+        ]
       },
-      "ActionMetadata": {
-        "2d84e0d3-9804-4c51-b95c-c0dec5230c71": {
-          "position": {
-            "x": 188.8,
-            "y": 38.4
-          },
-          "conditions": [],
-          "conditionMetadata": [
-            {
-              "id": "25342db1-52d9-4180-97f0-81f0819659fc",
-              "operator": {
-                "name": "Contains",
-                "value": "Contains",
-                "shortDisplay": "contains"
-              },
-              "value": "arn:aws"
-            }
-          ]
+      "b17292d8-e828-4110-ad5c-7b35ad48bc73": {
+        "position": {
+          "x": 745.6,
+          "y": 1516.8
+        }
+      },
+      "c78f56bf-b6d0-477d-b1f7-de15b88cfa18": {
+        "position": {
+          "x": 1552.8,
+          "y": 895.2
+        }
+      },
+      "Set Started_Media_0": {
+        "position": {
+          "x": 502.4,
+          "y": 41.6
         },
-        "b17292d8-e828-4110-ad5c-7b35ad48bc73": {
-          "position": {
-            "x": 745.6,
-            "y": 1516.8
+        "isFriendlyName": true
+      },
+      "Set Started_Media_1": {
+        "position": {
+          "x": 276,
+          "y": 390.4
+        },
+        "isFriendlyName": true
+      },
+      "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97": {
+        "position": {
+          "x": 320.8,
+          "y": 1445.6
+        },
+        "dynamicParams": []
+      },
+      "Engage": {
+        "position": {
+          "x": 876,
+          "y": 51.2
+        },
+        "isFriendlyName": true,
+        "parameters": {
+          "LambdaFunctionARN": {
+            "displayName": "generativeagent-quickstart-lambda-genagent-engage"
           }
         },
-        "c78f56bf-b6d0-477d-b1f7-de15b88cfa18": {
-          "position": {
-            "x": 1552.8,
-            "y": 895.2
-          }
+        "dynamicMetadata": {}
+      },
+      "32cb9b6f-b1ae-4c26-8cee-c61fe450b996": {
+        "position": {
+          "x": 516.8,
+          "y": 391.2
         },
-        "Set Started_Media_0": {
-          "position": {
-            "x": 502.4,
-            "y": 41.6
-          },
-          "isFriendlyName": true
+        "toCustomer": false,
+        "fromCustomer": true
+      },
+      "a2dbb45d-0573-4b39-bf5d-adb51762091e": {
+        "position": {
+          "x": 2464,
+          "y": -963.2
         },
-        "Set Started_Media_1": {
-          "position": {
-            "x": 276,
-            "y": 390.4
-          },
-          "isFriendlyName": true
-        },
-        "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97": {
-          "position": {
-            "x": 320.8,
-            "y": 1445.6
-          },
-          "dynamicParams": []
-        },
-        "Engage": {
-          "position": {
-            "x": 876,
-            "y": 51.2
-          },
-          "isFriendlyName": true,
-          "parameters": {
-            "LambdaFunctionARN": {
-              "displayName": "generativeagent-quickstart-lambda-genagent-engage"
-            }
-          },
-          "dynamicMetadata": {}
-        },
-        "32cb9b6f-b1ae-4c26-8cee-c61fe450b996": {
-          "position": {
-            "x": 516.8,
-            "y": 391.2
-          },
-          "toCustomer": false,
-          "fromCustomer": true
-        },
-        "a2dbb45d-0573-4b39-bf5d-adb51762091e": {
-          "position": {
-            "x": 2464,
-            "y": -963.2
-          },
-          "conditions": [],
-          "conditionMetadata": [
-            {
-              "id": "1e3938a7-5908-42e4-b2e0-1dd2b1c080df",
-              "operator": {
-                "name": "Equals",
-                "value": "Equals",
-                "shortDisplay": "="
-              },
-              "value": "1"
-            }
-          ]
-        },
-        "PlayBeepBopShort": {
-          "position": {
-            "x": 2764,
-            "y": -947.2
-          },
-          "isFriendlyName": true,
-          "parameters": {
-            "PromptId": {
-              "displayName": "asappBeepBop"
-            }
-          },
-          "promptName": "asappBeepBop"
-        },
-        "Wait400msPrompt": {
-          "position": {
-            "x": 2766.4,
-            "y": -761.6
-          },
-          "isFriendlyName": true,
-          "parameters": {
-            "PromptId": {
-              "displayName": "asappSilence400ms"
-            }
-          },
-          "promptName": "asappSilence400ms"
-        },
-        "Wait1sPrompt": {
-          "position": {
-            "x": 2460.8,
-            "y": -764.8
-          },
-          "isFriendlyName": true,
-          "parameters": {
-            "PromptId": {
-              "displayName": "asappSilence1second"
-            }
-          },
-          "promptName": "asappSilence1second"
-        },
-        "DidModuleStartMediaStreaming": {
-          "position": {
-            "x": 1283.2,
-            "y": 856.8
-          },
-          "isFriendlyName": true,
-          "conditions": [],
-          "conditionMetadata": [
-            {
-              "id": "a38ea3dc-6eef-4e62-a1c0-dbfd8ad044bc",
-              "operator": {
-                "name": "Equals",
-                "value": "Equals",
-                "shortDisplay": "="
-              },
-              "value": "1"
-            }
-          ]
-        },
-        "SetErrorMessage3": {
-          "position": {
-            "x": 2151.2,
-            "y": 592
-          },
-          "isFriendlyName": true,
-          "dynamicParams": []
-        },
-        "SetErrorMessage": {
-          "position": {
-            "x": 1617.6,
-            "y": 581.6
-          },
-          "isFriendlyName": true,
-          "dynamicParams": []
-        },
-        "2acc361b-1744-4c88-ba67-74d00a7e2100": {
-          "position": {
-            "x": 2051.2,
-            "y": -962.4
-          },
-          "conditions": [],
-          "conditionMetadata": [
-            {
-              "id": "d9b5912c-4ffe-4c16-8651-7592302a7c73",
-              "operator": {
-                "name": "Equals",
-                "value": "Equals",
-                "shortDisplay": "="
-              },
-              "value": "1"
+        "conditions": [],
+        "conditionMetadata": [
+          {
+            "id": "1e3938a7-5908-42e4-b2e0-1dd2b1c080df",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
             },
-            {
-              "id": "a327eba7-9b81-4b2a-9872-e863c5e59a5a",
-              "operator": {
-                "name": "Equals",
-                "value": "Equals",
-                "shortDisplay": "="
-              },
-              "value": "0"
-            }
-          ]
+            "value": "1"
+          }
+        ]
+      },
+      "PlayBeepBopShort": {
+        "position": {
+          "x": 2764,
+          "y": -947.2
         },
-        "SetErrorMessage2": {
-          "position": {
-            "x": 1900.8,
-            "y": 598.4
-          },
-          "isFriendlyName": true,
-          "dynamicParams": []
-        },
-        "ClearAgentProcessing": {
-          "position": {
-            "x": 2144,
-            "y": 239.2
-          },
-          "isFriendlyName": true
-        },
-        "SetAgentProcessing": {
-          "position": {
-            "x": 2148,
-            "y": 52
-          },
-          "isFriendlyName": true
-        },
-        "PullAction": {
-          "position": {
-            "x": 1240,
-            "y": 66.4
-          },
-          "isFriendlyName": true,
-          "parameters": {
-            "LambdaFunctionARN": {
-              "displayName": "generativeagent-quickstart-lambda-pullaction"
-            },
-            "LambdaInvocationAttributes": {
-              "companyMarker": {
-                "useDynamic": true
-              },
-              "guid": {
-                "useDynamic": true
-              }
-            }
-          },
-          "dynamicMetadata": {
-            "companyMarker": true,
-            "guid": true
+        "isFriendlyName": true,
+        "parameters": {
+          "PromptId": {
+            "displayName": "asappBeepBop"
           }
         },
-        "51dac188-6a3c-4219-b536-3dbbaf28efa6": {
-          "position": {
-            "x": 2226.4,
-            "y": -554.4
+        "promptName": "asappBeepBop"
+      },
+      "Wait400msPrompt": {
+        "position": {
+          "x": 2766.4,
+          "y": -761.6
+        },
+        "isFriendlyName": true,
+        "parameters": {
+          "PromptId": {
+            "displayName": "asappSilence400ms"
+          }
+        },
+        "promptName": "asappSilence400ms"
+      },
+      "Wait1sPrompt": {
+        "position": {
+          "x": 2460.8,
+          "y": -764.8
+        },
+        "isFriendlyName": true,
+        "parameters": {
+          "PromptId": {
+            "displayName": "asappSilence1second"
+          }
+        },
+        "promptName": "asappSilence1second"
+      },
+      "DidModuleStartMediaStreaming": {
+        "position": {
+          "x": 1283.2,
+          "y": 856.8
+        },
+        "isFriendlyName": true,
+        "conditions": [],
+        "conditionMetadata": [
+          {
+            "id": "a38ea3dc-6eef-4e62-a1c0-dbfd8ad044bc",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "1"
+          }
+        ]
+      },
+      "SetErrorMessage3": {
+        "position": {
+          "x": 2151.2,
+          "y": 592
+        },
+        "isFriendlyName": true,
+        "dynamicParams": []
+      },
+      "SetErrorMessage": {
+        "position": {
+          "x": 1617.6,
+          "y": 581.6
+        },
+        "isFriendlyName": true,
+        "dynamicParams": []
+      },
+      "2acc361b-1744-4c88-ba67-74d00a7e2100": {
+        "position": {
+          "x": 2051.2,
+          "y": -962.4
+        },
+        "conditions": [],
+        "conditionMetadata": [
+          {
+            "id": "d9b5912c-4ffe-4c16-8651-7592302a7c73",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "1"
           },
-          "parameters": {
-            "Text": {
+          {
+            "id": "a327eba7-9b81-4b2a-9872-e863c5e59a5a",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "0"
+          }
+        ]
+      },
+      "SetErrorMessage2": {
+        "position": {
+          "x": 1900.8,
+          "y": 598.4
+        },
+        "isFriendlyName": true,
+        "dynamicParams": []
+      },
+      "ClearAgentProcessing": {
+        "position": {
+          "x": 2144,
+          "y": 239.2
+        },
+        "isFriendlyName": true
+      },
+      "SetAgentProcessing": {
+        "position": {
+          "x": 2148,
+          "y": 52
+        },
+        "isFriendlyName": true
+      },
+      "PullAction": {
+        "position": {
+          "x": 1240,
+          "y": 66.4
+        },
+        "isFriendlyName": true,
+        "parameters": {
+          "LambdaFunctionARN": {
+            "displayName": "generativeagent-quickstart-lambda-pullaction"
+          },
+          "LambdaInvocationAttributes": {
+            "companyMarker": {
+              "useDynamic": true
+            },
+            "guid": {
               "useDynamic": true
             }
-          },
-          "useDynamic": true
-        },
-        "be130246-2564-413c-8ef8-a7d7db9427fc": {
-          "position": {
-            "x": 1492,
-            "y": -537.6
-          },
-          "conditionMetadata": [
-            {
-              "id": "77aee170-c7be-439e-abe3-92142e64d10b",
-              "operator": {
-                "name": "Equals",
-                "value": "Equals",
-                "shortDisplay": "="
-              },
-              "value": "none"
-            },
-            {
-              "id": "7c3078ae-0b6a-4009-abff-e9bc45cbf723",
-              "operator": {
-                "name": "Equals",
-                "value": "Equals",
-                "shortDisplay": "="
-              },
-              "value": "speak"
-            },
-            {
-              "id": "9035b382-6160-483b-a3f6-177d9cedd3a8",
-              "operator": {
-                "name": "Equals",
-                "value": "Equals",
-                "shortDisplay": "="
-              },
-              "value": "transferToAgent"
-            },
-            {
-              "id": "45de31a1-b462-4baa-b180-34d0c10a362d",
-              "operator": {
-                "name": "Equals",
-                "value": "Equals",
-                "shortDisplay": "="
-              },
-              "value": "processingStart"
-            },
-            {
-              "id": "b6b4c402-20c7-408f-945b-a5cbb226b517",
-              "operator": {
-                "name": "Equals",
-                "value": "Equals",
-                "shortDisplay": "="
-              },
-              "value": "processingEnd"
-            },
-            {
-              "id": "f2ecb02a-c566-4aae-9719-acfb0822c251",
-              "operator": {
-                "name": "Equals",
-                "value": "Equals",
-                "shortDisplay": "="
-              },
-              "value": "disengage"
-            },
-            {
-              "id": "13550fc3-7dd8-42c3-b1f1-8d8294f8d49b",
-              "operator": {
-                "name": "Equals",
-                "value": "Equals",
-                "shortDisplay": "="
-              },
-              "value": "error"
-            },
-            {
-              "id": "ebf5b8e7-62b9-4b94-8f02-5b0c78a92713",
-              "operator": {
-                "name": "Equals",
-                "value": "Equals",
-                "shortDisplay": "="
-              },
-              "value": "transferToSystem"
-            }
-          ]
-        },
-        "9c7b3530-d748-4efe-9a10-77fcf798042f": {
-          "position": {
-            "x": 3948.8,
-            "y": -268
           }
         },
-        "dd28ca32-d638-49e9-8825-9de55be49cea": {
-          "position": {
-            "x": 3760,
-            "y": -516.8
-          }
-        },
-        "SetDispositionDisengage": {
-          "position": {
-            "x": 3204.8,
-            "y": -243.2
-          },
-          "isFriendlyName": true,
-          "dynamicParams": []
-        },
-        "SetDispositionTransferToAgent": {
-          "position": {
-            "x": 3156,
-            "y": -876.8
-          },
-          "isFriendlyName": true,
-          "dynamicParams": []
-        },
-        "SetDispositionTransferToSystem": {
-          "position": {
-            "x": 3155.2,
-            "y": -621.6
-          },
-          "isFriendlyName": true,
-          "dynamicParams": []
-        },
-        "DidModuleStartMediaStreaming2": {
-          "position": {
-            "x": 3439.2,
-            "y": -520.8
-          },
-          "isFriendlyName": true,
-          "conditionMetadata": [
-            {
-              "id": "c4aab04e-9bb6-4858-a82e-58491775e124",
-              "operator": {
-                "name": "Equals",
-                "value": "Equals",
-                "shortDisplay": "="
-              },
-              "value": "1"
-            }
-          ]
+        "dynamicMetadata": {
+          "companyMarker": true,
+          "guid": true
         }
       },
-      "Annotations": [
-        {
-          "type": "default",
-          "id": "9d1ea13f-227e-4471-8da9-2183d3cadcd8",
-          "content": "Constantly pull for next action and process it accordingly. The actions of transferToAgent, disengage or error will cause the exit from the polling loop.",
-          "actionId": "PullAction",
-          "isFolded": true,
-          "position": {
-            "x": 1569.1666666666667,
-            "y": 289.66666666666663
-          },
-          "size": {
-            "height": 295,
-            "width": 300
+      "51dac188-6a3c-4219-b536-3dbbaf28efa6": {
+        "position": {
+          "x": 2226.4,
+          "y": -554.4
+        },
+        "parameters": {
+          "Text": {
+            "useDynamic": true
           }
         },
-        {
-          "type": "default",
-          "id": "a65a3e4f-9a1f-4f2c-b34c-f903903add54",
-          "content": "Must set the following User Defined attribute values before calling this module:\nASAPP_CompanyMarker - should be set to ASAPP configured value as communicated by ASAPP\n",
-          "actionId": "",
-          "isFolded": false,
-          "position": {
-            "x": -56,
-            "y": -330
-          },
-          "size": {
-            "height": 295,
-            "width": 300
-          }
+        "useDynamic": true
+      },
+      "SetDispositionTransferToAgent": {
+        "position": {
+          "x": 3156,
+          "y": -876.8
         },
-        {
-          "type": "default",
-          "id": "fa63b53a-7459-4047-8094-a813d9da5c1b",
-          "content": "Output Attributes set on Contact:\nASAPP_Disposition\nASAPP_ErrorMessage",
-          "actionId": "",
-          "isFolded": false,
-          "position": {
-            "x": 310,
-            "y": -331
-          },
-          "size": {
-            "height": 295,
-            "width": 300
-          }
-        },
-        {
-          "type": "default",
-          "id": "9e51f9a1-ed78-4a2f-91e7-0726cc78f316",
-          "content": "playBeepBop is returned by pullAction lambda and will be set to 1 whenever \"thinking\" sounds should be played",
-          "actionId": "a2dbb45d-0573-4b39-bf5d-adb51762091e",
-          "isFolded": true,
-          "position": {
-            "x": 3099.1666666666665,
-            "y": -997.3333333333334
-          },
-          "size": {
-            "height": 295,
-            "width": 300
-          }
+        "isFriendlyName": true,
+        "dynamicParams": []
+      },
+      "9c7b3530-d748-4efe-9a10-77fcf798042f": {
+        "position": {
+          "x": 4234.4,
+          "y": -197.6
         }
-      ],
-      "name": "ASAPPGenerativeAgent",
-      "description": "",
-      "status": "published",
-      "hash": {}
+      },
+      "dd28ca32-d638-49e9-8825-9de55be49cea": {
+        "position": {
+          "x": 4012.8,
+          "y": -519.2
+        }
+      },
+      "be130246-2564-413c-8ef8-a7d7db9427fc": {
+        "position": {
+          "x": 1492,
+          "y": -537.6
+        },
+        "conditionMetadata": [
+          {
+            "id": "77aee170-c7be-439e-abe3-92142e64d10b",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "none"
+          },
+          {
+            "id": "7c3078ae-0b6a-4009-abff-e9bc45cbf723",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "speak"
+          },
+          {
+            "id": "9035b382-6160-483b-a3f6-177d9cedd3a8",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "transferToAgent"
+          },
+          {
+            "id": "45de31a1-b462-4baa-b180-34d0c10a362d",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "processingStart"
+          },
+          {
+            "id": "b6b4c402-20c7-408f-945b-a5cbb226b517",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "processingEnd"
+          },
+          {
+            "id": "f2ecb02a-c566-4aae-9719-acfb0822c251",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "disengage"
+          },
+          {
+            "id": "13550fc3-7dd8-42c3-b1f1-8d8294f8d49b",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "error"
+          },
+          {
+            "id": "ebf5b8e7-62b9-4b94-8f02-5b0c78a92713",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "transferToSystem"
+          }
+        ]
+      },
+      "SetDispositionDisengage": {
+        "position": {
+          "x": 3180,
+          "y": -293.6
+        },
+        "isFriendlyName": true,
+        "dynamicParams": []
+      },
+      "SetDispositionTransferToSystem": {
+        "position": {
+          "x": 3180.8,
+          "y": -626.4
+        },
+        "isFriendlyName": true,
+        "dynamicParams": []
+      },
+      "DidModuleStartMediaStreaming2": {
+        "position": {
+          "x": 3784,
+          "y": -473.6
+        },
+        "isFriendlyName": true,
+        "conditions": [],
+        "conditionMetadata": [
+          {
+            "id": "c4aab04e-9bb6-4858-a82e-58491775e124",
+            "operator": {
+              "name": "Equals",
+              "value": "Equals",
+              "shortDisplay": "="
+            },
+            "value": "1"
+          }
+        ]
+      },
+      "ExtractOutputVariables": {
+        "position": {
+          "x": 3503.2,
+          "y": 32.8
+        },
+        "isFriendlyName": true,
+        "dynamicParams": []
+      }
     },
-    "Actions": [
+    "Annotations": [
       {
-        "Parameters": {
-          "ComparisonValue": "$.MediaStreams.Customer.Audio.StreamARN"
+        "type": "default",
+        "id": "9d1ea13f-227e-4471-8da9-2183d3cadcd8",
+        "content": "Constantly pull for next action and process it accordingly. The actions of transferToAgent, disengage or error will cause the exit from the polling loop.",
+        "actionId": "PullAction",
+        "isFolded": true,
+        "position": {
+          "x": 1569.1666666666667,
+          "y": 289.66666666666663
         },
-        "Identifier": "2d84e0d3-9804-4c51-b95c-c0dec5230c71",
-        "Type": "Compare",
-        "Transitions": {
-          "NextAction": "Set Started_Media_1",
-          "Conditions": [
-            {
-              "NextAction": "Set Started_Media_0",
-              "Condition": {
-                "Operator": "TextContains",
-                "Operands": [
-                  "arn:aws"
-                ]
-              }
-            }
-          ],
-          "Errors": [
-            {
-              "NextAction": "Set Started_Media_1",
-              "ErrorType": "NoMatchingCondition"
-            }
-          ]
+        "size": {
+          "height": 295,
+          "width": 300
         }
       },
       {
-        "Parameters": {},
-        "Identifier": "b17292d8-e828-4110-ad5c-7b35ad48bc73",
-        "Type": "EndFlowModuleExecution",
-        "Transitions": {}
-      },
-      {
-        "Parameters": {
-          "MediaStreamingState": "Disabled",
-          "Participants": [
-            {
-              "ParticipantType": "Customer",
-              "MediaDirections": [
-                "To",
-                "From"
-              ]
-            }
-          ],
-          "MediaStreamType": "Audio"
+        "type": "default",
+        "id": "a65a3e4f-9a1f-4f2c-b34c-f903903add54",
+        "content": "Must set the following User Defined attribute values before calling this module:\nASAPP_CompanyMarker - should be set to ASAPP configured value as communicated by ASAPP\n",
+        "actionId": "",
+        "isFolded": false,
+        "position": {
+          "x": -56,
+          "y": -330
         },
-        "Identifier": "c78f56bf-b6d0-477d-b1f7-de15b88cfa18",
-        "Type": "UpdateContactMediaStreamingBehavior",
-        "Transitions": {
-          "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
-          "Errors": [
-            {
-              "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
+        "size": {
+          "height": 295,
+          "width": 300
         }
       },
       {
-        "Parameters": {
-          "FlowAttributes": {
-            "ASAPP_Started_Media": {
-              "Value": "0"
-            }
-          }
+        "type": "default",
+        "id": "fa63b53a-7459-4047-8094-a813d9da5c1b",
+        "content": "Output Attributes set on Contact:\nASAPP_Disposition\nASAPP_ErrorMessage",
+        "actionId": "",
+        "isFolded": false,
+        "position": {
+          "x": 310,
+          "y": -331
         },
-        "Identifier": "Set Started_Media_0",
-        "Type": "UpdateFlowAttributes",
-        "Transitions": {
-          "NextAction": "Engage",
-          "Errors": [
-            {
-              "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
+        "size": {
+          "height": 295,
+          "width": 300
         }
       },
       {
-        "Parameters": {
-          "FlowAttributes": {
-            "ASAPP_Started_Media": {
-              "Value": "1"
-            }
-          }
+        "type": "default",
+        "id": "9e51f9a1-ed78-4a2f-91e7-0726cc78f316",
+        "content": "playBeepBop is returned by pullAction lambda and will be set to 1 whenever \"thinking\" sounds should be played",
+        "actionId": "a2dbb45d-0573-4b39-bf5d-adb51762091e",
+        "isFolded": true,
+        "position": {
+          "x": 3099.1666666666665,
+          "y": -997.3333333333334
         },
-        "Identifier": "Set Started_Media_1",
-        "Type": "UpdateFlowAttributes",
-        "Transitions": {
-          "NextAction": "32cb9b6f-b1ae-4c26-8cee-c61fe450b996",
-          "Errors": [
-            {
-              "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
+        "size": {
+          "height": 295,
+          "width": 300
         }
       },
       {
-        "Parameters": {
-          "Attributes": {
-            "ASAPP_Disposition": "error"
-          },
-          "TargetContact": "Current"
+        "type": "default",
+        "id": "34da16d8-b4c5-4a43-b0db-621aa99e717d",
+        "content": "Extract output variables here, use $.External.outputVariables.<variableName> where <variableName> is what the name of the variable you've set in the Set Variables part of System Transfer function in GenerativeAgent. All variable names are case-sensitive.",
+        "actionId": "ExtractOutputVariables",
+        "isFolded": false,
+        "position": {
+          "x": 4391.5,
+          "y": 249
         },
-        "Identifier": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
-        "Type": "UpdateContactAttributes",
-        "Transitions": {
-          "NextAction": "b17292d8-e828-4110-ad5c-7b35ad48bc73",
-          "Errors": [
-            {
-              "NextAction": "b17292d8-e828-4110-ad5c-7b35ad48bc73",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "LambdaFunctionARN": "asapp-generativeagent-engage-lambda-arn",
-          "InvocationTimeLimitSeconds": "8",
-          "ResponseValidation": {
-            "ResponseType": "STRING_MAP"
-          }
-        },
-        "Identifier": "Engage",
-        "Type": "InvokeLambdaFunction",
-        "Transitions": {
-          "NextAction": "PullAction",
-          "Errors": [
-            {
-              "NextAction": "DidModuleStartMediaStreaming",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "MediaStreamingState": "Enabled",
-          "MediaStreamType": "Audio",
-          "Participants": [
-            {
-              "ParticipantType": "Customer",
-              "MediaDirections": [
-                "From"
-              ]
-            }
-          ]
-        },
-        "Identifier": "32cb9b6f-b1ae-4c26-8cee-c61fe450b996",
-        "Type": "UpdateContactMediaStreamingBehavior",
-        "Transitions": {
-          "NextAction": "Engage",
-          "Errors": [
-            {
-              "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "ComparisonValue": "$.External.playBeepBop"
-        },
-        "Identifier": "a2dbb45d-0573-4b39-bf5d-adb51762091e",
-        "Type": "Compare",
-        "Transitions": {
-          "NextAction": "Wait400msPrompt",
-          "Conditions": [
-            {
-              "NextAction": "PlayBeepBopShort",
-              "Condition": {
-                "Operator": "Equals",
-                "Operands": [
-                  "1"
-                ]
-              }
-            }
-          ],
-          "Errors": [
-            {
-              "NextAction": "Wait400msPrompt",
-              "ErrorType": "NoMatchingCondition"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "PromptId": "asappBeepBop"
-        },
-        "Identifier": "PlayBeepBopShort",
-        "Type": "MessageParticipant",
-        "Transitions": {
-          "NextAction": "PullAction",
-          "Errors": [
-            {
-              "NextAction": "SetErrorMessage3",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "PromptId": "asappSilence400ms"
-        },
-        "Identifier": "Wait400msPrompt",
-        "Type": "MessageParticipant",
-        "Transitions": {
-          "NextAction": "PullAction",
-          "Errors": [
-            {
-              "NextAction": "SetErrorMessage3",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "PromptId": "asappSilence1s"
-        },
-        "Identifier": "Wait1sPrompt",
-        "Type": "MessageParticipant",
-        "Transitions": {
-          "NextAction": "PullAction",
-          "Errors": [
-            {
-              "NextAction": "SetErrorMessage3",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "ComparisonValue": "$.FlowAttributes.ASAPP_Started_Media"
-        },
-        "Identifier": "DidModuleStartMediaStreaming",
-        "Type": "Compare",
-        "Transitions": {
-          "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
-          "Conditions": [
-            {
-              "NextAction": "c78f56bf-b6d0-477d-b1f7-de15b88cfa18",
-              "Condition": {
-                "Operator": "Equals",
-                "Operands": [
-                  "1"
-                ]
-              }
-            }
-          ],
-          "Errors": [
-            {
-              "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
-              "ErrorType": "NoMatchingCondition"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "Attributes": {
-            "ASAPP_ErrorMessage": "flow module error"
-          },
-          "TargetContact": "Current"
-        },
-        "Identifier": "SetErrorMessage3",
-        "Type": "UpdateContactAttributes",
-        "Transitions": {
-          "NextAction": "DidModuleStartMediaStreaming",
-          "Errors": [
-            {
-              "NextAction": "DidModuleStartMediaStreaming",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "Attributes": {
-            "ASAPP_ErrorMessage": "Unknown next action $.External.next"
-          },
-          "TargetContact": "Current"
-        },
-        "Identifier": "SetErrorMessage",
-        "Type": "UpdateContactAttributes",
-        "Transitions": {
-          "NextAction": "DidModuleStartMediaStreaming",
-          "Errors": [
-            {
-              "NextAction": "DidModuleStartMediaStreaming",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "ComparisonValue": "$.FlowAttributes.genagentProcessing"
-        },
-        "Identifier": "2acc361b-1744-4c88-ba67-74d00a7e2100",
-        "Type": "Compare",
-        "Transitions": {
-          "NextAction": "Wait1sPrompt",
-          "Conditions": [
-            {
-              "NextAction": "a2dbb45d-0573-4b39-bf5d-adb51762091e",
-              "Condition": {
-                "Operator": "Equals",
-                "Operands": [
-                  "1"
-                ]
-              }
-            },
-            {
-              "NextAction": "Wait1sPrompt",
-              "Condition": {
-                "Operator": "Equals",
-                "Operands": [
-                  "0"
-                ]
-              }
-            }
-          ],
-          "Errors": [
-            {
-              "NextAction": "Wait1sPrompt",
-              "ErrorType": "NoMatchingCondition"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "Attributes": {
-            "ASAPP_ErrorMessage": "$.External.text"
-          },
-          "TargetContact": "Current"
-        },
-        "Identifier": "SetErrorMessage2",
-        "Type": "UpdateContactAttributes",
-        "Transitions": {
-          "NextAction": "DidModuleStartMediaStreaming",
-          "Errors": [
-            {
-              "NextAction": "DidModuleStartMediaStreaming",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "FlowAttributes": {
-            "genagentProcessing": {
-              "Value": "0"
-            }
-          }
-        },
-        "Identifier": "ClearAgentProcessing",
-        "Type": "UpdateFlowAttributes",
-        "Transitions": {
-          "NextAction": "PullAction",
-          "Errors": [
-            {
-              "NextAction": "SetErrorMessage3",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "FlowAttributes": {
-            "genagentProcessing": {
-              "Value": "1"
-            }
-          }
-        },
-        "Identifier": "SetAgentProcessing",
-        "Type": "UpdateFlowAttributes",
-        "Transitions": {
-          "NextAction": "PullAction",
-          "Errors": [
-            {
-              "NextAction": "SetErrorMessage3",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "LambdaFunctionARN": "asapp-generativeagent-pullaction-lambda-arn",
-          "InvocationTimeLimitSeconds": "3",
-          "LambdaInvocationAttributes": {
-            "companyMarker": "$.Attributes.ASAPP_CompanyMarker",
-            "guid": "$.ContactId"
-          },
-          "ResponseValidation": {
-            "ResponseType": "JSON"
-          }
-        },
-        "Identifier": "PullAction",
-        "Type": "InvokeLambdaFunction",
-        "Transitions": {
-          "NextAction": "be130246-2564-413c-8ef8-a7d7db9427fc",
-          "Errors": [
-            {
-              "NextAction": "DidModuleStartMediaStreaming",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "Text": "$.External.text"
-        },
-        "Identifier": "51dac188-6a3c-4219-b536-3dbbaf28efa6",
-        "Type": "MessageParticipant",
-        "Transitions": {
-          "NextAction": "PullAction",
-          "Errors": [
-            {
-              "NextAction": "SetErrorMessage3",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "ComparisonValue": "$.External.next"
-        },
-        "Identifier": "be130246-2564-413c-8ef8-a7d7db9427fc",
-        "Type": "Compare",
-        "Transitions": {
-          "NextAction": "SetErrorMessage",
-          "Conditions": [
-            {
-              "NextAction": "2acc361b-1744-4c88-ba67-74d00a7e2100",
-              "Condition": {
-                "Operator": "Equals",
-                "Operands": [
-                  "none"
-                ]
-              }
-            },
-            {
-              "NextAction": "51dac188-6a3c-4219-b536-3dbbaf28efa6",
-              "Condition": {
-                "Operator": "Equals",
-                "Operands": [
-                  "speak"
-                ]
-              }
-            },
-            {
-              "NextAction": "SetDispositionTransferToAgent",
-              "Condition": {
-                "Operator": "Equals",
-                "Operands": [
-                  "transferToAgent"
-                ]
-              }
-            },
-            {
-              "NextAction": "SetAgentProcessing",
-              "Condition": {
-                "Operator": "Equals",
-                "Operands": [
-                  "processingStart"
-                ]
-              }
-            },
-            {
-              "NextAction": "ClearAgentProcessing",
-              "Condition": {
-                "Operator": "Equals",
-                "Operands": [
-                  "processingEnd"
-                ]
-              }
-            },
-            {
-              "NextAction": "SetDispositionDisengage",
-              "Condition": {
-                "Operator": "Equals",
-                "Operands": [
-                  "disengage"
-                ]
-              }
-            },
-            {
-              "NextAction": "SetErrorMessage2",
-              "Condition": {
-                "Operator": "Equals",
-                "Operands": [
-                  "error"
-                ]
-              }
-            },
-            {
-              "NextAction": "SetDispositionTransferToSystem",
-              "Condition": {
-                "Operator": "Equals",
-                "Operands": [
-                  "transferToSystem"
-                ]
-              }
-            }
-          ],
-          "Errors": [
-            {
-              "NextAction": "SetErrorMessage",
-              "ErrorType": "NoMatchingCondition"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {},
-        "Identifier": "9c7b3530-d748-4efe-9a10-77fcf798042f",
-        "Type": "EndFlowModuleExecution",
-        "Transitions": {}
-      },
-      {
-        "Parameters": {
-          "MediaStreamingState": "Disabled",
-          "Participants": [
-            {
-              "ParticipantType": "Customer",
-              "MediaDirections": [
-                "To",
-                "From"
-              ]
-            }
-          ],
-          "MediaStreamType": "Audio"
-        },
-        "Identifier": "dd28ca32-d638-49e9-8825-9de55be49cea",
-        "Type": "UpdateContactMediaStreamingBehavior",
-        "Transitions": {
-          "NextAction": "9c7b3530-d748-4efe-9a10-77fcf798042f",
-          "Errors": [
-            {
-              "NextAction": "9c7b3530-d748-4efe-9a10-77fcf798042f",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "Attributes": {
-            "ASAPP_Disposition": "disengage"
-          },
-          "TargetContact": "Current"
-        },
-        "Identifier": "SetDispositionDisengage",
-        "Type": "UpdateContactAttributes",
-        "Transitions": {
-          "NextAction": "DidModuleStartMediaStreaming2",
-          "Errors": [
-            {
-              "NextAction": "DidModuleStartMediaStreaming2",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "Attributes": {
-            "ASAPP_Disposition": "transferToAgent"
-          },
-          "TargetContact": "Current"
-        },
-        "Identifier": "SetDispositionTransferToAgent",
-        "Type": "UpdateContactAttributes",
-        "Transitions": {
-          "NextAction": "DidModuleStartMediaStreaming2",
-          "Errors": [
-            {
-              "NextAction": "DidModuleStartMediaStreaming2",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "Attributes": {
-            "ASAPP_Disposition": "transferToSystem"
-          },
-          "TargetContact": "Current"
-        },
-        "Identifier": "SetDispositionTransferToSystem",
-        "Type": "UpdateContactAttributes",
-        "Transitions": {
-          "NextAction": "DidModuleStartMediaStreaming2",
-          "Errors": [
-            {
-              "NextAction": "DidModuleStartMediaStreaming2",
-              "ErrorType": "NoMatchingError"
-            }
-          ]
-        }
-      },
-      {
-        "Parameters": {
-          "ComparisonValue": "$.FlowAttributes.ASAPP_Started_Media"
-        },
-        "Identifier": "DidModuleStartMediaStreaming2",
-        "Type": "Compare",
-        "Transitions": {
-          "NextAction": "9c7b3530-d748-4efe-9a10-77fcf798042f",
-          "Conditions": [
-            {
-              "NextAction": "dd28ca32-d638-49e9-8825-9de55be49cea",
-              "Condition": {
-                "Operator": "Equals",
-                "Operands": [
-                  "1"
-                ]
-              }
-            }
-          ],
-          "Errors": [
-            {
-              "NextAction": "9c7b3530-d748-4efe-9a10-77fcf798042f",
-              "ErrorType": "NoMatchingCondition"
-            }
-          ]
+        "size": {
+          "height": 295,
+          "width": 300
         }
       }
     ],
-    "Settings": {
-      "InputParameters": [],
-      "OutputParameters": [],
-      "Transitions": [
-        {
-          "DisplayName": "Success",
-          "ReferenceName": "Success",
-          "Description": ""
-        },
-        {
-          "DisplayName": "Error",
-          "ReferenceName": "Error",
-          "Description": ""
+    "name": "ASAPPGenerativeAgent",
+    "description": "",
+    "status": "published",
+    "hash": {}
+  },
+  "Actions": [
+    {
+      "Parameters": {
+        "ComparisonValue": "$.MediaStreams.Customer.Audio.StreamARN"
+      },
+      "Identifier": "2d84e0d3-9804-4c51-b95c-c0dec5230c71",
+      "Type": "Compare",
+      "Transitions": {
+        "NextAction": "Set Started_Media_1",
+        "Conditions": [
+          {
+            "NextAction": "Set Started_Media_0",
+            "Condition": {
+              "Operator": "TextContains",
+              "Operands": [
+                "arn:aws"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "Set Started_Media_1",
+            "ErrorType": "NoMatchingCondition"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {},
+      "Identifier": "b17292d8-e828-4110-ad5c-7b35ad48bc73",
+      "Type": "EndFlowModuleExecution",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {
+        "MediaStreamingState": "Disabled",
+        "Participants": [
+          {
+            "ParticipantType": "Customer",
+            "MediaDirections": [
+              "To",
+              "From"
+            ]
+          }
+        ],
+        "MediaStreamType": "Audio"
+      },
+      "Identifier": "c78f56bf-b6d0-477d-b1f7-de15b88cfa18",
+      "Type": "UpdateContactMediaStreamingBehavior",
+      "Transitions": {
+        "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
+        "Errors": [
+          {
+            "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "FlowAttributes": {
+          "ASAPP_Started_Media": {
+            "Value": "0"
+          }
         }
-      ]
+      },
+      "Identifier": "Set Started_Media_0",
+      "Type": "UpdateFlowAttributes",
+      "Transitions": {
+        "NextAction": "Engage",
+        "Errors": [
+          {
+            "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "FlowAttributes": {
+          "ASAPP_Started_Media": {
+            "Value": "1"
+          }
+        }
+      },
+      "Identifier": "Set Started_Media_1",
+      "Type": "UpdateFlowAttributes",
+      "Transitions": {
+        "NextAction": "32cb9b6f-b1ae-4c26-8cee-c61fe450b996",
+        "Errors": [
+          {
+            "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Attributes": {
+          "ASAPP_Disposition": "error"
+        },
+        "TargetContact": "Current"
+      },
+      "Identifier": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "b17292d8-e828-4110-ad5c-7b35ad48bc73",
+        "Errors": [
+          {
+            "NextAction": "b17292d8-e828-4110-ad5c-7b35ad48bc73",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "LambdaFunctionARN": "asapp-generativeagent-engage-lambda-arn",
+        "InvocationTimeLimitSeconds": "8",
+        "ResponseValidation": {
+          "ResponseType": "STRING_MAP"
+        }
+      },
+      "Identifier": "Engage",
+      "Type": "InvokeLambdaFunction",
+      "Transitions": {
+        "NextAction": "PullAction",
+        "Errors": [
+          {
+            "NextAction": "DidModuleStartMediaStreaming",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "MediaStreamingState": "Enabled",
+        "MediaStreamType": "Audio",
+        "Participants": [
+          {
+            "ParticipantType": "Customer",
+            "MediaDirections": [
+              "From"
+            ]
+          }
+        ]
+      },
+      "Identifier": "32cb9b6f-b1ae-4c26-8cee-c61fe450b996",
+      "Type": "UpdateContactMediaStreamingBehavior",
+      "Transitions": {
+        "NextAction": "Engage",
+        "Errors": [
+          {
+            "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "ComparisonValue": "$.External.playBeepBop"
+      },
+      "Identifier": "a2dbb45d-0573-4b39-bf5d-adb51762091e",
+      "Type": "Compare",
+      "Transitions": {
+        "NextAction": "Wait400msPrompt",
+        "Conditions": [
+          {
+            "NextAction": "PlayBeepBopShort",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "1"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "Wait400msPrompt",
+            "ErrorType": "NoMatchingCondition"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "PromptId": "asappBeepBop"
+      },
+      "Identifier": "PlayBeepBopShort",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "PullAction",
+        "Errors": [
+          {
+            "NextAction": "SetErrorMessage3",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "PromptId": "asappSilence400ms"
+      },
+      "Identifier": "Wait400msPrompt",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "PullAction",
+        "Errors": [
+          {
+            "NextAction": "SetErrorMessage3",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "PromptId": "asappSilence1s"
+      },
+      "Identifier": "Wait1sPrompt",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "PullAction",
+        "Errors": [
+          {
+            "NextAction": "SetErrorMessage3",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "ComparisonValue": "$.FlowAttributes.ASAPP_Started_Media"
+      },
+      "Identifier": "DidModuleStartMediaStreaming",
+      "Type": "Compare",
+      "Transitions": {
+        "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
+        "Conditions": [
+          {
+            "NextAction": "c78f56bf-b6d0-477d-b1f7-de15b88cfa18",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "1"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "7c3b2393-e75a-4c0f-bda3-ed09de7d0b97",
+            "ErrorType": "NoMatchingCondition"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Attributes": {
+          "ASAPP_ErrorMessage": "flow module error"
+        },
+        "TargetContact": "Current"
+      },
+      "Identifier": "SetErrorMessage3",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "DidModuleStartMediaStreaming",
+        "Errors": [
+          {
+            "NextAction": "DidModuleStartMediaStreaming",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Attributes": {
+          "ASAPP_ErrorMessage": "Unknown next action $.External.next"
+        },
+        "TargetContact": "Current"
+      },
+      "Identifier": "SetErrorMessage",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "DidModuleStartMediaStreaming",
+        "Errors": [
+          {
+            "NextAction": "DidModuleStartMediaStreaming",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "ComparisonValue": "$.FlowAttributes.genagentProcessing"
+      },
+      "Identifier": "2acc361b-1744-4c88-ba67-74d00a7e2100",
+      "Type": "Compare",
+      "Transitions": {
+        "NextAction": "Wait1sPrompt",
+        "Conditions": [
+          {
+            "NextAction": "a2dbb45d-0573-4b39-bf5d-adb51762091e",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "1"
+              ]
+            }
+          },
+          {
+            "NextAction": "Wait1sPrompt",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "0"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "Wait1sPrompt",
+            "ErrorType": "NoMatchingCondition"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Attributes": {
+          "ASAPP_ErrorMessage": "$.External.text"
+        },
+        "TargetContact": "Current"
+      },
+      "Identifier": "SetErrorMessage2",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "DidModuleStartMediaStreaming",
+        "Errors": [
+          {
+            "NextAction": "DidModuleStartMediaStreaming",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "FlowAttributes": {
+          "genagentProcessing": {
+            "Value": "0"
+          }
+        }
+      },
+      "Identifier": "ClearAgentProcessing",
+      "Type": "UpdateFlowAttributes",
+      "Transitions": {
+        "NextAction": "PullAction",
+        "Errors": [
+          {
+            "NextAction": "SetErrorMessage3",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "FlowAttributes": {
+          "genagentProcessing": {
+            "Value": "1"
+          }
+        }
+      },
+      "Identifier": "SetAgentProcessing",
+      "Type": "UpdateFlowAttributes",
+      "Transitions": {
+        "NextAction": "PullAction",
+        "Errors": [
+          {
+            "NextAction": "SetErrorMessage3",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "LambdaFunctionARN": "asapp-generativeagent-pullaction-lambda-arn",
+        "InvocationTimeLimitSeconds": "3",
+        "LambdaInvocationAttributes": {
+          "companyMarker": "$.Attributes.ASAPP_CompanyMarker",
+          "guid": "$.ContactId"
+        },
+        "ResponseValidation": {
+          "ResponseType": "JSON"
+        }
+      },
+      "Identifier": "PullAction",
+      "Type": "InvokeLambdaFunction",
+      "Transitions": {
+        "NextAction": "be130246-2564-413c-8ef8-a7d7db9427fc",
+        "Errors": [
+          {
+            "NextAction": "DidModuleStartMediaStreaming",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Text": "$.External.text"
+      },
+      "Identifier": "51dac188-6a3c-4219-b536-3dbbaf28efa6",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "PullAction",
+        "Errors": [
+          {
+            "NextAction": "SetErrorMessage3",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Attributes": {
+          "ASAPP_Disposition": "transferToAgent"
+        },
+        "TargetContact": "Current"
+      },
+      "Identifier": "SetDispositionTransferToAgent",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "DidModuleStartMediaStreaming2",
+        "Errors": [
+          {
+            "NextAction": "DidModuleStartMediaStreaming2",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {},
+      "Identifier": "9c7b3530-d748-4efe-9a10-77fcf798042f",
+      "Type": "EndFlowModuleExecution",
+      "Transitions": {}
+    },
+    {
+      "Parameters": {
+        "MediaStreamingState": "Disabled",
+        "Participants": [
+          {
+            "ParticipantType": "Customer",
+            "MediaDirections": [
+              "To",
+              "From"
+            ]
+          }
+        ],
+        "MediaStreamType": "Audio"
+      },
+      "Identifier": "dd28ca32-d638-49e9-8825-9de55be49cea",
+      "Type": "UpdateContactMediaStreamingBehavior",
+      "Transitions": {
+        "NextAction": "9c7b3530-d748-4efe-9a10-77fcf798042f",
+        "Errors": [
+          {
+            "NextAction": "9c7b3530-d748-4efe-9a10-77fcf798042f",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "ComparisonValue": "$.External.next"
+      },
+      "Identifier": "be130246-2564-413c-8ef8-a7d7db9427fc",
+      "Type": "Compare",
+      "Transitions": {
+        "NextAction": "SetErrorMessage",
+        "Conditions": [
+          {
+            "NextAction": "2acc361b-1744-4c88-ba67-74d00a7e2100",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "none"
+              ]
+            }
+          },
+          {
+            "NextAction": "51dac188-6a3c-4219-b536-3dbbaf28efa6",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "speak"
+              ]
+            }
+          },
+          {
+            "NextAction": "SetDispositionTransferToAgent",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "transferToAgent"
+              ]
+            }
+          },
+          {
+            "NextAction": "SetAgentProcessing",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "processingStart"
+              ]
+            }
+          },
+          {
+            "NextAction": "ClearAgentProcessing",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "processingEnd"
+              ]
+            }
+          },
+          {
+            "NextAction": "SetDispositionDisengage",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "disengage"
+              ]
+            }
+          },
+          {
+            "NextAction": "SetErrorMessage2",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "error"
+              ]
+            }
+          },
+          {
+            "NextAction": "SetDispositionTransferToSystem",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "transferToSystem"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "SetErrorMessage",
+            "ErrorType": "NoMatchingCondition"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Attributes": {
+          "ASAPP_Disposition": "disengage"
+        },
+        "TargetContact": "Current"
+      },
+      "Identifier": "SetDispositionDisengage",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "DidModuleStartMediaStreaming2",
+        "Errors": [
+          {
+            "NextAction": "DidModuleStartMediaStreaming2",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Attributes": {
+          "ASAPP_Disposition": "transferToSystem"
+        },
+        "TargetContact": "Current"
+      },
+      "Identifier": "SetDispositionTransferToSystem",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "ExtractOutputVariables",
+        "Errors": [
+          {
+            "NextAction": "ExtractOutputVariables",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "ComparisonValue": "$.FlowAttributes.ASAPP_Started_Media"
+      },
+      "Identifier": "DidModuleStartMediaStreaming2",
+      "Type": "Compare",
+      "Transitions": {
+        "NextAction": "9c7b3530-d748-4efe-9a10-77fcf798042f",
+        "Conditions": [
+          {
+            "NextAction": "dd28ca32-d638-49e9-8825-9de55be49cea",
+            "Condition": {
+              "Operator": "Equals",
+              "Operands": [
+                "1"
+              ]
+            }
+          }
+        ],
+        "Errors": [
+          {
+            "NextAction": "9c7b3530-d748-4efe-9a10-77fcf798042f",
+            "ErrorType": "NoMatchingCondition"
+          }
+        ]
+      }
+    },
+    {
+      "Parameters": {
+        "Attributes": {},
+        "TargetContact": "Current"
+      },
+      "Identifier": "ExtractOutputVariables",
+      "Type": "UpdateContactAttributes",
+      "Transitions": {
+        "NextAction": "DidModuleStartMediaStreaming2",
+        "Errors": [
+          {
+            "NextAction": "DidModuleStartMediaStreaming2",
+            "ErrorType": "NoMatchingError"
+          }
+        ]
+      }
     }
+  ],
+  "Settings": {
+    "InputParameters": [],
+    "OutputParameters": [],
+    "Transitions": [
+      {
+        "DisplayName": "Success",
+        "ReferenceName": "Success",
+        "Description": ""
+      },
+      {
+        "DisplayName": "Error",
+        "ReferenceName": "Error",
+        "Description": ""
+      }
+    ]
   }
+}

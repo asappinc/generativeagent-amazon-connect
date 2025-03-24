@@ -1,5 +1,5 @@
 import { default as axios } from 'axios';
-
+import { default as attributesToInputVariables } from './attributesToInputVariables.mjs';
 
 /*
 {
@@ -69,6 +69,17 @@ export const handler = async (event) => {
 
     console.log(`Executing for guid - ${event.Details.ContactData.ContactId}`);
 
+    const inputVariables = {};
+    // Map Amazon Connect User Defined Attributes to input variables for use in Engage flows.
+    if (event.Details.ContactData.Attributes) {
+        for (const [key, value] of Object.entries(event.Details.ContactData.Attributes)) {
+            if (attributesToInputVariables[key]) {
+                inputVariables[attributesToInputVariables[key]] = value;
+            }
+        }
+    }
+
+
     /**
      * @type {import("./types").EngageRequest }
      */
@@ -77,6 +88,7 @@ export const handler = async (event) => {
         guid: event.Details.ContactData.ContactId,
         language: 'en-US',
         customerId: event.Details.ContactData.CustomerEndpoint.Address,
+        inputVariables,
         amazonConnectParams: {
             streamArn: event.Details.ContactData.MediaStreams.Customer.Audio.StreamARN
         }

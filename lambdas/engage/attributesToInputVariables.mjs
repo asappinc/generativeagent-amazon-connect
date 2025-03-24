@@ -1,0 +1,5 @@
+// Maps Amazon Connect User Defined Attributes to input variables for use in Engage flows. Key is the Connect attribute name, value is the GenerativeAgent input variable name.
+export default 
+{
+    
+}

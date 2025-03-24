@@ -15,9 +15,9 @@ export type SpeakParams = {
 }
 
 export type TransferToAgentParams = {
-    outputVariables?: object
+    outputVariables?: Record<string, string>
 }
 
 export type TransferToSystemParams = {
-    outputVariables?: object
+    outputVariables?: Record<string, string>
 }

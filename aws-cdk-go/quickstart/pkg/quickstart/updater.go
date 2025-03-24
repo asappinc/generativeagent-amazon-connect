@@ -1,6 +1,8 @@
-package main
+package quickstart
 
 import (
+	"fmt"
+
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/iancoleman/orderedmap"
 )
@@ -47,4 +49,56 @@ func UpdateResourcesARN(data *orderedmap.OrderedMap, region, accountId, connectI
 			}
 		}
 	}
+}
+
+//	{
+//		"Parameters": {
+//		  "Attributes": {},
+//		  "TargetContact": "Current"
+//		},
+//		"Identifier": "ExtractOutputVariables",
+//		"Type": "UpdateContactAttributes",
+//		"Transitions": {
+//		  "NextAction": "DidModuleStartMediaStreaming2",
+//		  "Errors": [
+//			{
+//			  "NextAction": "DidModuleStartMediaStreaming2",
+//			  "ErrorType": "NoMatchingError"
+//			}
+//		  ]
+//		}
+//	  }
+func UpdateExtractOutputVariables(data *orderedmap.OrderedMap, outputVariablesToAttributesMap map[string]string) {
+
+	actions, ok := data.Get("Actions")
+	if !ok {
+		return
+	}
+
+	for _, val := range actions.([]any) {
+		action := val.(orderedmap.OrderedMap)
+		identifier, ok := action.Get("Identifier")
+		if !ok || identifier.(string) != "ExtractOutputVariables" {
+			continue
+		}
+
+		parameters, ok := action.Get("Parameters")
+		if !ok {
+			break
+		}
+		parametersMap := parameters.(orderedmap.OrderedMap)
+		attributes, ok := parametersMap.Get("Attributes")
+		if !ok {
+			break
+		}
+		attributesMap := attributes.(orderedmap.OrderedMap)
+		for outputVariable, targetAttribute := range outputVariablesToAttributesMap {
+			attributesMap.Set(targetAttribute, fmt.Sprintf("$.External.outputVariables.%s", outputVariable))
+		}
+		parametersMap.Set("Attributes", attributesMap)
+		action.Set("Parameters", parametersMap)
+		break
+
+	}
+
 }

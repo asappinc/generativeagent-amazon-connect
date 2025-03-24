@@ -1,4 +1,4 @@
-module generativeagent-quickstart
+module github.com/asappinc/generativeagent-amazon-connect
 
 go 1.23.0
 

@@ -4,6 +4,7 @@ export type EngageRequest = {
     language: 'en-US'
     customerId: string
     amazonConnectParams: AmazonConnectParams
+    inputVariables: Record<string, string>
 
 }
 

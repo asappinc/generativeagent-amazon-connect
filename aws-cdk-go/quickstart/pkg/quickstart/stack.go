@@ -1,13 +1,14 @@
-package main
+package quickstart
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
-	quickStart "generativeagent-quickstart/pkg"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/asappinc/generativeagent-amazon-connect/pkg/config"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsconnect"
@@ -22,15 +23,12 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2/customresources"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
-	"github.com/aws/aws-sdk-go-v2/config"
+	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/connect"
 	"github.com/aws/aws-sdk-go-v2/service/connect/types"
 	"github.com/aws/jsii-runtime-go"
 
 	"github.com/iancoleman/orderedmap"
-
-	"github.com/heetch/confita"
-	"github.com/heetch/confita/backend/file"
 
 	"github.com/aws/constructs-go/constructs/v10"
 )
@@ -40,20 +38,39 @@ type AmazonConnectDemoCdkStackProps struct {
 	EnvName *string
 }
 
-func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, props *AmazonConnectDemoCdkStackProps, cfg *quickStart.Config) awscdk.Stack {
+const (
+	promptsPath = "../../flow-modules/prompts"
+
+	// Lambda paths
+	engageLambdaDir                           = "../../lambdas/engage"
+	engageLambdaIndexPath                     = engageLambdaDir + "/index.mjs"
+	engageLambdaAttributeToInputVariablesPath = engageLambdaDir + "/attributesToInputVariables.mjs"
+	engageLambdaLockPath                      = engageLambdaDir + "/package-lock.json"
+	pullActionLambdaDir                       = "../../lambdas/pullaction"
+	pullActionLambdaIndexPath                 = pullActionLambdaDir + "/index.mjs"
+	pullActionLambdaLockPath                  = pullActionLambdaDir + "/package-lock.json"
+	pushActionLambdaDir                       = "../../lambdas/pushaction"
+	pushActionLambdaIndexPath                 = pushActionLambdaDir + "/index.mjs"
+	pushActionLambdaLockPath                  = pushActionLambdaDir + "/package-lock.json"
+
+	// Template paths
+	contactFlowModulePath = "../../flow-modules/template/ASAPPGenerativeAgent.json"
+)
+
+func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, props *AmazonConnectDemoCdkStackProps, cfg *config.Config) awscdk.Stack {
 	var sprops awscdk.StackProps
 	if props != nil {
 		sprops = props.StackProps
 	}
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
-	awslogs.NewLogGroup(stack, jsii.String("generativeagent-quickstart-stack-log-group"), &awslogs.LogGroupProps{
-		LogGroupName:  jsii.String("generativeagent-quickstart-stack-log-group"),
+	awslogs.NewLogGroup(stack, generateObjectName(cfg, "stack-log-group"), &awslogs.LogGroupProps{
+		LogGroupName:  generateObjectName(cfg, "stack-log-group"),
 		Retention:     awslogs.RetentionDays_THREE_DAYS,
 		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
 	})
 
-	awsCfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(cfg.Region))
+	awsCfg, err := awsconfig.LoadDefaultConfig(context.Background(), awsconfig.WithRegion(cfg.Region))
 	if err != nil {
 		log.Fatalf("unable to load SDK config, %v", err)
 	}
@@ -64,7 +81,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 		InstanceId:   jsii.String(cfg.ConnectInstanceArn),
 		ResourceType: types.InstanceStorageResourceTypeMediaStreams,
 	}
-	result, err := svc.ListInstanceStorageConfigs(context.TODO(), instanceStorageConfigsInput)
+	result, err := svc.ListInstanceStorageConfigs(context.Background(), instanceStorageConfigsInput)
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
@@ -82,7 +99,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	}
 
 	if !kinesisPrefixExists { // If the Kinesis prefix doesn't exist, create it using a AWS Custom Resource call
-		kinesisVideoStreamConfigPrefix = "generativeagent-quickstart"
+		kinesisVideoStreamConfigPrefix = cfg.ObjectPrefix
 		customresources.NewAwsCustomResource(stack, jsii.String("EnableKinesisPrefix"), &customresources.AwsCustomResourceProps{
 			OnCreate: &customresources.AwsSdkCall{
 				Service: jsii.String("Connect"),
@@ -129,22 +146,22 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 
 	// -- Setup the Prompts --
 	// Create an S3 Bucket to store the audio files
-	s3Bucket := awss3.NewBucket(stack, jsii.String("generativeagent-quickstart-bucket"), &awss3.BucketProps{
+	s3Bucket := awss3.NewBucket(stack, generateObjectName(cfg, "bucket"), &awss3.BucketProps{
 		Versioned:         jsii.Bool(false),
 		RemovalPolicy:     awscdk.RemovalPolicy_DESTROY,
 		AutoDeleteObjects: jsii.Bool(true),
 	})
 
 	// Grant the custom Role read access to the S3 Bucket
-	customInstanceRole := awsiam.NewRole(stack, jsii.String("generativeagent-quickstart-custom-instance-role"), &awsiam.RoleProps{
+	customInstanceRole := awsiam.NewRole(stack, generateObjectName(cfg, "custom-instance-role"), &awsiam.RoleProps{
 		AssumedBy: awsiam.NewServicePrincipal(jsii.String("connect.amazonaws.com"), nil),
 	})
 	s3Bucket.GrantRead(customInstanceRole, "*")
 
 	// Upload the audio files to the S3 Bucket
-	s3BucketDeployment := awss3deployment.NewBucketDeployment(stack, jsii.String("generativeagent-quickstart-bucket-deployment"), &awss3deployment.BucketDeploymentProps{
+	s3BucketDeployment := awss3deployment.NewBucketDeployment(stack, generateObjectName(cfg, "bucket-deployment"), &awss3deployment.BucketDeploymentProps{
 		Sources: &[]awss3deployment.ISource{
-			awss3deployment.Source_Asset(jsii.String("../../flow-modules/prompts"), nil),
+			awss3deployment.Source_Asset(jsii.String(promptsPath), nil),
 		},
 		DestinationBucket: s3Bucket,
 	})
@@ -155,14 +172,14 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	silence400msUrl := s3Bucket.S3UrlForObject(jsii.String("asappSilence400ms.wav"))
 
 	// Create the Prompts
-	createBeepbopShortPrompt := customresources.NewAwsCustomResource(stack, jsii.String("generativeagent-quickstart-create-prompt-asappBeepBop"),
+	createBeepbopShortPrompt := customresources.NewAwsCustomResource(stack, generateObjectName(cfg, "create-prompt-asappBeepBop"),
 		&customresources.AwsCustomResourceProps{
 			OnCreate: &customresources.AwsSdkCall{
 				Service: jsii.String("Connect"),
 				Action:  jsii.String("CreatePrompt"),
 				Parameters: map[string]interface{}{
 					"InstanceId":  jsii.String(cfg.ConnectInstanceArn),
-					"Name":        jsii.String("asappBeepBop"),
+					"Name":        jsii.String("asappBeepBop2"),
 					"S3Uri":       beepbopUrl,
 					"Description": jsii.String("Short BeepBop no silence"),
 				},
@@ -189,14 +206,14 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 			}),
 		})
 
-	createSilence1secondPrompt := customresources.NewAwsCustomResource(stack, jsii.String("generativeagent-quickstart-create-prompt-asappSilence1second"),
+	createSilence1secondPrompt := customresources.NewAwsCustomResource(stack, generateObjectName(cfg, "create-prompt-asappSilence1second"),
 		&customresources.AwsCustomResourceProps{
 			OnCreate: &customresources.AwsSdkCall{
 				Service: jsii.String("Connect"),
 				Action:  jsii.String("CreatePrompt"),
 				Parameters: map[string]interface{}{
 					"InstanceId":  jsii.String(cfg.ConnectInstanceArn),
-					"Name":        jsii.String("asappSilence1second"),
+					"Name":        jsii.String("asappSilence1second2"),
 					"S3Uri":       silence1secondUrl,
 					"Description": jsii.String("One second silence"),
 				},
@@ -223,14 +240,14 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 			}),
 		})
 
-	createSilence400msPrompt := customresources.NewAwsCustomResource(stack, jsii.String("generativeagent-quickstart-create-prompt-asappSilence400ms"),
+	createSilence400msPrompt := customresources.NewAwsCustomResource(stack, generateObjectName(cfg, "create-prompt-asappSilence400ms"),
 		&customresources.AwsCustomResourceProps{
 			OnCreate: &customresources.AwsSdkCall{
 				Service: jsii.String("Connect"),
 				Action:  jsii.String("CreatePrompt"),
 				Parameters: map[string]interface{}{
 					"InstanceId":  jsii.String(cfg.ConnectInstanceArn),
-					"Name":        jsii.String("asappSilence400ms"),
+					"Name":        jsii.String("asappSilence400ms2"),
 					"S3Uri":       silence400msUrl,
 					"Description": jsii.String("Silence for 400ms"),
 				},
@@ -267,7 +284,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	silence400msPromptId := createSilence400msPrompt.GetResponseField(jsii.String("PromptId"))
 
 	// -- Create the VPC --
-	vpc := awsec2.NewVpc(stack, jsii.String("generativeagent-quickstart-vpc"), &awsec2.VpcProps{
+	vpc := awsec2.NewVpc(stack, generateObjectName(cfg, "vpc"), &awsec2.VpcProps{
 		MaxAzs: aws.Float64(2), // Two availability zones.
 		SubnetConfiguration: &[]*awsec2.SubnetConfiguration{
 			{
@@ -279,33 +296,33 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	vpcPrivateIsolatedSubnets := *vpc.IsolatedSubnets()
 
 	// -- Create the Security Groups --
-	redisSecurityGroup := awsec2.NewSecurityGroup(stack, jsii.String("generativeagent-quickstart-redis-security-group"), &awsec2.SecurityGroupProps{
+	redisSecurityGroup := awsec2.NewSecurityGroup(stack, generateObjectName(cfg, "redis-security-group"), &awsec2.SecurityGroupProps{
 		Vpc:               vpc,
-		SecurityGroupName: jsii.String("generativeagent-quickstart-redis-security-group"),
+		SecurityGroupName: generateObjectName(cfg, "redis-security-group"),
 		AllowAllOutbound:  jsii.Bool(false),
 	})
-	pullActionLambdaSecurityGroup := awsec2.NewSecurityGroup(stack, jsii.String("generativeagent-quickstart-lambda-pullaction-security-group"), &awsec2.SecurityGroupProps{
+	pullActionLambdaSecurityGroup := awsec2.NewSecurityGroup(stack, generateObjectName(cfg, "lambda-pullaction-security-group"), &awsec2.SecurityGroupProps{
 		Vpc:               vpc,
-		SecurityGroupName: jsii.String("generativeagent-quickstart-lambda-pullaction-security-group"),
+		SecurityGroupName: generateObjectName(cfg, "lambda-pullaction-security-group"),
 		AllowAllOutbound:  jsii.Bool(false),
 	})
-	pushActionLambdaSecurityGroup := awsec2.NewSecurityGroup(stack, jsii.String("generativeagent-quickstart-lambda-pushaction-security-group"), &awsec2.SecurityGroupProps{
+	pushActionLambdaSecurityGroup := awsec2.NewSecurityGroup(stack, generateObjectName(cfg, "lambda-pushaction-security-group"), &awsec2.SecurityGroupProps{
 		Vpc:               vpc,
-		SecurityGroupName: jsii.String("generativeagent-quickstart-lambda-pushaction-security-group"),
+		SecurityGroupName: generateObjectName(cfg, "lambda-pushaction-security-group"),
 		AllowAllOutbound:  jsii.Bool(false),
 	})
 
 	redisSecurityGroup.AddIngressRule(
 		pullActionLambdaSecurityGroup,
 		awsec2.Port_Tcp(aws.Float64(6379)),
-		jsii.String("Allow inbound TCP traffic only from generativeagent-quickstart-lambda-pullaction-security-group into the Reddis port"),
+		jsii.String(fmt.Sprintf("Allow inbound TCP traffic only from %slambda-pullaction-security-group into the Reddis port", cfg.ObjectPrefix)),
 		jsii.Bool(false),
 	)
 
 	redisSecurityGroup.AddIngressRule(
 		pushActionLambdaSecurityGroup,
 		awsec2.Port_Tcp(aws.Float64(6379)),
-		jsii.String("Allow inbound TCP traffic only from generativeagent-quickstart-lambda-pushaction-security-group into the Reddis port"),
+		jsii.String(fmt.Sprintf("Allow inbound TCP traffic only from %slambda-pushaction-security-group into the Reddis port", cfg.ObjectPrefix)),
 		jsii.Bool(false),
 	)
 
@@ -324,7 +341,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	)
 
 	// -- Create the Redis cluster --
-	redisSubnetGroup := awselasticache.NewCfnSubnetGroup(stack, jsii.String("generativeagent-quickstart-redis-subnet-group"), &awselasticache.CfnSubnetGroupProps{
+	redisSubnetGroup := awselasticache.NewCfnSubnetGroup(stack, generateObjectName(cfg, "redis-subnet-group"), &awselasticache.CfnSubnetGroupProps{
 		Description: jsii.String("Subnet group for ASAPP Redis"),
 		SubnetIds: &[]*string{
 			vpcPrivateIsolatedSubnets[0].SubnetId(),
@@ -332,8 +349,8 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 		},
 	})
 
-	redisCluster := awselasticache.NewCfnCacheCluster(stack, jsii.String("generativeagent-quickstart-redis-cluster"), &awselasticache.CfnCacheClusterProps{
-		ClusterName:          jsii.String("generativeagent-quickstart-redis-cluster"),
+	redisCluster := awselasticache.NewCfnCacheCluster(stack, generateObjectName(cfg, "redis-cluster"), &awselasticache.CfnCacheClusterProps{
+		ClusterName:          generateObjectName(cfg, "redis-cluster"),
 		CacheNodeType:        jsii.String("cache.t4g.micro"),
 		Engine:               jsii.String("redis"),
 		NumCacheNodes:        aws.Float64(1),
@@ -348,14 +365,27 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 		redisCluster.AttrRedisEndpointPort(),
 	})
 
+	attributeToVarsFile, err := os.Create(engageLambdaAttributeToInputVariablesPath)
+	if err != nil {
+		log.Fatalf("Failed to create attributeToVarsFile: %v", err)
+		return nil
+	}
+	defer attributeToVarsFile.Close()
+	err = writeAttributesToInputVariablesFile(attributeToVarsFile, cfg.AttributesToInputVariablesMap)
+	if err != nil {
+		log.Fatalf("Failed to write to attributeToVarsFile: %v", err)
+		return nil
+
+	}
+
 	/// -- Create the Lambda functions and associate them to the Connect Instance --
 	// Engage: this function only talks to Internet endpoints and is not attached to a VPC.
-	engageLambdaFunction := awslambdanodejs.NewNodejsFunction(stack, jsii.String("generativeagent-quickstart-lambda-genagent-engage"), &awslambdanodejs.NodejsFunctionProps{
-		FunctionName:     jsii.String("generativeagent-quickstart-lambda-genagent-engage"),
-		Entry:            jsii.String("../../lambdas/engage/index.mjs"),
+	engageLambdaFunction := awslambdanodejs.NewNodejsFunction(stack, generateObjectName(cfg, "lambda-genagent-engage"), &awslambdanodejs.NodejsFunctionProps{
+		FunctionName:     generateObjectName(cfg, "lambda-genagent-engage"),
+		Entry:            jsii.String(engageLambdaIndexPath),
 		Handler:          jsii.String("handler"),
-		Runtime:          awslambda.Runtime_NODEJS_20_X(),
-		DepsLockFilePath: jsii.String("../../lambdas/engage/package-lock.json"),
+		Runtime:          awslambda.Runtime_NODEJS_22_X(),
+		DepsLockFilePath: jsii.String(engageLambdaLockPath),
 		Bundling: &awslambdanodejs.BundlingOptions{
 			Format: awslambdanodejs.OutputFormat_ESM,
 			ExternalModules: &[]*string{
@@ -410,12 +440,12 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	associateEngageLambdaWithConnect.Node().AddDependency(engageLambdaFunction)
 
 	// PullAction: this function needs access to the Redis Cluster, so it needs to be on the same VPC.
-	pullActionLambdaFunction := awslambdanodejs.NewNodejsFunction(stack, jsii.String("generativeagent-quickstart-lambda-pullaction"), &awslambdanodejs.NodejsFunctionProps{
-		FunctionName:     jsii.String("generativeagent-quickstart-lambda-pullaction"),
-		Entry:            jsii.String("../../lambdas/pullaction/index.mjs"),
+	pullActionLambdaFunction := awslambdanodejs.NewNodejsFunction(stack, generateObjectName(cfg, "lambda-pullaction"), &awslambdanodejs.NodejsFunctionProps{
+		FunctionName:     generateObjectName(cfg, "lambda-pullaction"),
+		Entry:            jsii.String(pullActionLambdaIndexPath),
 		Handler:          jsii.String("handler"),
-		Runtime:          awslambda.Runtime_NODEJS_20_X(),
-		DepsLockFilePath: jsii.String("../../lambdas/pullaction/package-lock.json"),
+		Runtime:          awslambda.Runtime_NODEJS_22_X(),
+		DepsLockFilePath: jsii.String(pullActionLambdaLockPath),
 		Bundling: &awslambdanodejs.BundlingOptions{
 			Format: awslambdanodejs.OutputFormat_ESM,
 			ExternalModules: &[]*string{
@@ -473,12 +503,12 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	associatePullActionLambdaWithConnect.Node().AddDependency(pullActionLambdaFunction)
 
 	// PushAction: this function needs access to the Redis Cluster, so it needs to be on the same VPC.
-	pushActionLambdaFunction := awslambdanodejs.NewNodejsFunction(stack, jsii.String("generativeagent-quickstart-lambda-pushaction"), &awslambdanodejs.NodejsFunctionProps{
-		FunctionName:     jsii.String("generativeagent-quickstart-lambda-pushaction"),
-		Entry:            jsii.String("../../lambdas/pushaction/index.mjs"),
+	pushActionLambdaFunction := awslambdanodejs.NewNodejsFunction(stack, generateObjectName(cfg, "lambda-pushaction"), &awslambdanodejs.NodejsFunctionProps{
+		FunctionName:     generateObjectName(cfg, "lambda-pushaction"),
+		Entry:            jsii.String(pushActionLambdaIndexPath),
 		Handler:          jsii.String("handler"),
-		Runtime:          awslambda.Runtime_NODEJS_20_X(),
-		DepsLockFilePath: jsii.String("../../lambdas/pushaction/package-lock.json"),
+		Runtime:          awslambda.Runtime_NODEJS_22_X(),
+		DepsLockFilePath: jsii.String(pushActionLambdaLockPath),
 		Bundling: &awslambdanodejs.BundlingOptions{
 			Format: awslambdanodejs.OutputFormat_ESM,
 			ExternalModules: &[]*string{
@@ -531,7 +561,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	associatePushActionLambdaWithConnect.Node().AddDependency(pushActionLambdaFunction)
 
 	// Read Contact Flow Module
-	contactFlowModuleContent, err := os.ReadFile("../../flow-modules/template/ASAPPGenerativeAgent.json")
+	contactFlowModuleContent, err := os.ReadFile(contactFlowModulePath)
 	if err != nil {
 		log.Fatalf("Failed to read Contact Flow Module file: %v", err)
 		return nil
@@ -570,15 +600,18 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	// Update the referenced resources (Prompts and Lambda functions), then Marshal the content into the same variable.
 	UpdateResourcesARN(&contactFlowModuleContentMap, cfg.Region, cfg.AccountId, cfg.ConnectInstanceArn, promptArnsMap, lambdaFunctionsArnMap)
 
+	// Update Output Variables
+	UpdateExtractOutputVariables(&contactFlowModuleContentMap, cfg.OutputVariablesToAttributesMap)
+
 	contactFlowModuleContent, err = json.MarshalIndent(contactFlowModuleContentMap, "", "  ")
 	if err != nil {
 		log.Fatalf("Failed to marshal updated JSON: %v\n", err)
 	}
 
 	// Create the Contact Flow Module
-	connectModule := awsconnect.NewCfnContactFlowModule(stack, jsii.String("generativeagent-quickstart-contact-flow-module"), &awsconnect.CfnContactFlowModuleProps{
+	connectModule := awsconnect.NewCfnContactFlowModule(stack, generateObjectName(cfg, "contact-flow-module"), &awsconnect.CfnContactFlowModuleProps{
 		InstanceArn: jsii.String(cfg.ConnectInstanceArn),
-		Name:        jsii.String("generativeagent-quickstart-contact-flow-module"),
+		Name:        generateObjectName(cfg, "contact-flow-module"),
 		Content:     jsii.String(string(contactFlowModuleContent)),
 	})
 
@@ -588,8 +621,8 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	connectModule.Node().AddDependency(createSilence400msPrompt)
 
 	// -- Create the Role: generativeagent-quickstart-access-role --
-	asappGenagentAccessRole := awsiam.NewRole(stack, jsii.String("generativeagent-quickstart-access-role"), &awsiam.RoleProps{
-		RoleName: jsii.String("generativeagent-quickstart-access-role"),
+	asappGenagentAccessRole := awsiam.NewRole(stack, generateObjectName(cfg, "access-role"), &awsiam.RoleProps{
+		RoleName: generateObjectName(cfg, "access-role"),
 		AssumedBy: awsiam.NewCompositePrincipal(
 			awsiam.NewArnPrincipal(jsii.String(cfg.Asapp.AssumingRoleArn)), // TrustASAPPRole
 		)})
@@ -600,8 +633,8 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	sbAsappKinesisAccessPolicy.WriteString(":stream/")
 	sbAsappKinesisAccessPolicy.WriteString(kinesisVideoStreamConfigPrefix)
 	sbAsappKinesisAccessPolicy.WriteString("*/*")
-	asappKinesisAccessPolicy := awsiam.NewPolicy(stack, jsii.String("generativeagent-quickstart-kinesis-access"), &awsiam.PolicyProps{
-		PolicyName: jsii.String("generativeagent-quickstart-kinesis-access"),
+	asappKinesisAccessPolicy := awsiam.NewPolicy(stack, generateObjectName(cfg, "kinesis-access"), &awsiam.PolicyProps{
+		PolicyName: generateObjectName(cfg, "kinesis-access"),
 		Statements: &[]awsiam.PolicyStatement{
 			// First Statement: ReadAmazonConnectStreams
 			awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
@@ -629,8 +662,8 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	})
 	asappGenagentAccessRole.AttachInlinePolicy(asappKinesisAccessPolicy)
 
-	asappInvokePushActionLambdaPolicy := awsiam.NewPolicy(stack, jsii.String("generativeagent-quickstart-pushaction-lambda-access"), &awsiam.PolicyProps{
-		PolicyName: jsii.String("generativeagent-quickstart-pushaction-lambda-access"),
+	asappInvokePushActionLambdaPolicy := awsiam.NewPolicy(stack, generateObjectName(cfg, "pushaction-lambda-access"), &awsiam.PolicyProps{
+		PolicyName: generateObjectName(cfg, "pushaction-lambda-access"),
 		Statements: &[]awsiam.PolicyStatement{
 			awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
 				Effect: awsiam.Effect_ALLOW,
@@ -658,55 +691,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	return stack
 }
 
-func main() {
-	app := awscdk.NewApp(nil)
-	envName := app.Node().TryGetContext(jsii.String("envName")).(string)
-	cfg, err := loadConfiguration(envName)
-	if err != nil {
-		log.Fatalf("Error loading config: %v", err)
-	}
-	NewQuickStartGenerativeAgentStack(app, "generativeagent-quickstart-stack", &AmazonConnectDemoCdkStackProps{
-		StackProps: awscdk.StackProps{
-			Env: env(cfg.AccountId, cfg.Region),
-		},
-	}, cfg)
-
-	app.Synth(nil)
-}
-
-// env determines the AWS environment (account+region) in which our stack is to
-// be deployed. For more information see: https://docs.aws.amazon.com/cdk/latest/guide/environments.html
-func env(accountId, region string) *awscdk.Environment {
-
-	// If unspecified, this stack will be "environment-agnostic".
-	// Account/Region-dependent features and context lookups will not work, but a
-	// single synthesized template can be deployed anywhere.
-	//---------------------------------------------------------------------------
-	// return nil
-
-	// Uncomment if you know exactly what account and region you want to deploy
-	// the stack to. This is the recommendation for production stacks.
-	//---------------------------------------------------------------------------
-	return &awscdk.Environment{
-		Account: jsii.String(accountId),
-		Region:  jsii.String(region),
-	}
-
-	// Uncomment to specialize this stack for the AWS Account and Region that are
-	// implied by the current CLI configuration. This is recommended for dev
-	// stacks.
-	//---------------------------------------------------------------------------
-	// return &awscdk.Environment{
-	//  Account: jsii.String(os.Getenv("CDK_DEFAULT_ACCOUNT")),
-	//  Region:  jsii.String(os.Getenv("CDK_DEFAULT_REGION")),
-	// }
-}
-
-func loadConfiguration(envName string) (*quickStart.Config, error) {
-	// Load configuration
-	cfgFilename := fmt.Sprintf("config.%s.json", envName)
-	loader := confita.NewLoader(file.NewBackend(cfgFilename))
-	cfg := quickStart.Config{}
-	err := loader.Load(context.Background(), &cfg)
-	return &cfg, err
+func generateObjectName(cfg *config.Config, name string) *string {
+	val := fmt.Sprintf("%s%s", cfg.ObjectPrefix, name)
+	return &val
 }

@@ -22,3 +22,4 @@ cdk-integ.out.*/
 
 # Configuration file
 config*.json
+!config.sample.json

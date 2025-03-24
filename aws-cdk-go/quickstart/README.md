@@ -86,31 +86,37 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
 
    2. ### Complete the configuration file
 
-      Before deploying the infrastructure, you need to provide a valid configuration file by creating  `config.sample.json` file located at the root level of the project. This file provides necessary environment details, and must follow the structure outlined below:
+      Before deploying the infrastructure, you need to provide a valid configuration file by editing  `config.sample.json` file located at the root level of the project. This file provides necessary environment details, and must follow the structure outlined below:
 
       ```json
       {
          "accountId": "",
          "region": "",
          "connectInstanceArn": "",
+         "objectPrefix": "generativeagent-quickstart-",
          "asapp": {
             "apiHost": "",
             "apiId": "",
             "apiSecret" : "",
             "assumingRoleArn": ""
-         }
+         },
+         "attributesToInputVariablesMap":   {},
+         "outputVariablesToAttributesMap": {}
       }
       ```
 
-      | Property                | Description                                                                                              |
-      | ----------------------- | -------------------------------------------------------------------------------------------------------- |
-      | `accountId`             | Your AWS account ID.                                                                                     |
-      | `region`                | The AWS region where your Amazon Connect instance is hosted.                                             |
-      | `connectInstanceArn`    | The Amazon Resource Name (ARN) of your Amazon Connect instance that this setup is interacting with.      |
-      | `asapp.apiHost`         | Provided by ASAPP. The API host endpoint, which the system interacts with.                               |
-      | `asapp.apiId`           | Provided by ASAPP. The API ID for authentication and access to the API.                                  |
-      | `asapp.apiSecret`       | Provided by ASAPP. The API secret or authentication and access to the API.                               |
-      | `asapp.assumingRoleArn` | Provided by ASAPP. The ARN of the IAM role that your system will assume to interact with ASAPP services. |
+      | Property                         | Description                                                                                              |
+      | -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+      | `accountId`                      | Your AWS account ID.                                                                                     |
+      | `region`                         | The AWS region where your Amazon Connect instance is hosted.                                             |
+      | `connectInstanceArn`             | The Amazon Resource Name (ARN) of your Amazon Connect instance that this setup is interacting with.      |
+      | `objectPrefix`                   | Prefix for AWS objects created by CDK stack, default value - `generativeagent-quickstart-`               |
+      | `attributesToInputVariablesMap`  | Map of Amazon Connect attributes (User Defined) to GenerativeAgent input variables                       |
+      | `outputVariablesToAttributesMap` | Map of GenerativeAgent output variables to Amazon Connect attributes (User Defined)                      |
+      | `asapp.apiHost`                  | Provided by ASAPP. The API host endpoint, which the system interacts with.                               |
+      | `asapp.apiId`                    | Provided by ASAPP. The API ID for authentication and access to the API.                                  |
+      | `asapp.apiSecret`                | Provided by ASAPP. The API secret or authentication and access to the API.                               |
+      | `asapp.assumingRoleArn`          | Provided by ASAPP. The ARN of the IAM role that your system will assume to interact with ASAPP services. |
 
 
    3. ### Boostrap your CDK environment
@@ -141,6 +147,7 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
    ```
    
 > <b>Important:</b> Once deployment is complete, CDK will output some values to the terminal. Copy those values and provide them to ASAPP in order to get the proper permissions granted for your infrastructure to connect to ASAPP services.
+> Sometimes AWS API times out and CDK deployment fails. If that happens, the remaining artifacts can be cleaned up under CloudFormation service and CDK deploy can be run again.
 
 <br />
 

@@ -88,11 +88,13 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 
 	kinesisPrefixExists := false
 	kinesisVideoStreamConfigPrefix := ""
+	kinesisVideoKMSKeyArn := ""
 	if len(result.StorageConfigs) > 0 {
 		for _, storageConfig := range result.StorageConfigs {
 			if storageConfig.StorageType == types.StorageTypeKinesisVideoStream {
 				fmt.Printf("Kinesis Video Stream Config found: %v\n", *storageConfig.KinesisVideoStreamConfig.Prefix)
 				kinesisVideoStreamConfigPrefix = *storageConfig.KinesisVideoStreamConfig.Prefix
+				kinesisVideoKMSKeyArn = *storageConfig.KinesisVideoStreamConfig.EncryptionConfig.KeyId
 				kinesisPrefixExists = true
 			}
 		}
@@ -283,16 +285,32 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	silence1secondPromptId := createSilence1secondPrompt.GetResponseField(jsii.String("PromptId"))
 	silence400msPromptId := createSilence400msPrompt.GetResponseField(jsii.String("PromptId"))
 
-	// -- Create the VPC --
-	vpc := awsec2.NewVpc(stack, generateObjectName(cfg, "vpc"), &awsec2.VpcProps{
-		MaxAzs: aws.Float64(2), // Two availability zones.
-		SubnetConfiguration: &[]*awsec2.SubnetConfiguration{
-			{
-				Name:       jsii.String("PrivateIsolatedSubnet"),
-				SubnetType: awsec2.SubnetType_PRIVATE_ISOLATED,
+	// VPC configuration
+	var vpc awsec2.IVpc
+
+	if cfg.UseExistingVpcId != "" {
+		// -- Lookup the VPC --
+		vpc = awsec2.Vpc_FromLookup(stack, generateObjectName(cfg, "vpc"), &awsec2.VpcLookupOptions{
+			VpcId: jsii.String(cfg.UseExistingVpcId),
+		})
+		if vpc == nil {
+			log.Fatalf("Failed to find VPC with ID: %s", cfg.UseExistingVpcId)
+			return nil
+		}
+
+	} else {
+		// -- Create the VPC --
+		vpc = awsec2.NewVpc(stack, generateObjectName(cfg, "vpc"), &awsec2.VpcProps{
+			MaxAzs: aws.Float64(2), // Two availability zones.
+			SubnetConfiguration: &[]*awsec2.SubnetConfiguration{
+				{
+					Name:       jsii.String("PrivateIsolatedSubnet"),
+					SubnetType: awsec2.SubnetType_PRIVATE_ISOLATED,
+				},
 			},
-		},
-	})
+		})
+	}
+
 	vpcPrivateIsolatedSubnets := *vpc.IsolatedSubnets()
 
 	// -- Create the Security Groups --
@@ -340,13 +358,15 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 		jsii.Bool(false),
 	)
 
+	var redisSubnetGroupSubnetIds []*string
+	for _, subnet := range vpcPrivateIsolatedSubnets {
+		redisSubnetGroupSubnetIds = append(redisSubnetGroupSubnetIds, subnet.SubnetId())
+	}
+
 	// -- Create the Redis cluster --
 	redisSubnetGroup := awselasticache.NewCfnSubnetGroup(stack, generateObjectName(cfg, "redis-subnet-group"), &awselasticache.CfnSubnetGroupProps{
 		Description: jsii.String("Subnet group for ASAPP Redis"),
-		SubnetIds: &[]*string{
-			vpcPrivateIsolatedSubnets[0].SubnetId(),
-			vpcPrivateIsolatedSubnets[1].SubnetId(),
-		},
+		SubnetIds:   &redisSubnetGroupSubnetIds,
 	})
 
 	redisCluster := awselasticache.NewCfnCacheCluster(stack, generateObjectName(cfg, "redis-cluster"), &awselasticache.CfnCacheClusterProps{
@@ -660,6 +680,22 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 			}),
 		},
 	})
+
+	// if kinesisVideoKMSKeyArn is not empty, add a statement to allow decrypting the KMS key, this is not needed if the KMS key is aws/kinesisvideo
+	if kinesisVideoKMSKeyArn != "" {
+		asappKinesisAccessPolicy.AddStatements(
+			awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
+				Effect: awsiam.Effect_ALLOW,
+				Actions: &[]*string{
+					jsii.String("kms:Decrypt"),
+				},
+				Resources: &[]*string{
+					jsii.String(kinesisVideoKMSKeyArn),
+				},
+			}),
+		)
+	}
+
 	asappGenagentAccessRole.AttachInlinePolicy(asappKinesisAccessPolicy)
 
 	asappInvokePushActionLambdaPolicy := awsiam.NewPolicy(stack, generateObjectName(cfg, "pushaction-lambda-access"), &awsiam.PolicyProps{

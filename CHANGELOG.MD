@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [1.0.1] - 2024-03-26
+### Added
+ - CDK: Add support to use existing VPC instead of always creating new one
+ - CDK: Add support for customer managed KMS key used for Kinesis streaming (permission added to IAM role)
+
+### Changed
+ - Module: Add default configuration to ExtractOutputVariables block to allow empty outputVariables in CDK
+
+
 ## [1.0.0] - 2024-03-24
 ### Added
  - GenerativeAgent Input and Output variables support

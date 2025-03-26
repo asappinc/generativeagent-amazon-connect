@@ -405,6 +405,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 		Entry:            jsii.String(engageLambdaIndexPath),
 		Handler:          jsii.String("handler"),
 		Runtime:          awslambda.Runtime_NODEJS_22_X(),
+		Timeout:          awscdk.Duration_Seconds(jsii.Number(15)),
 		DepsLockFilePath: jsii.String(engageLambdaLockPath),
 		Bundling: &awslambdanodejs.BundlingOptions{
 			Format: awslambdanodejs.OutputFormat_ESM,

@@ -20,11 +20,11 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
       go version
       ```
 
-   2. ### **Node.js (v20)**  
+   2. ### **Node.js (v22)**  
 
-      To install Node.js v20, run:
+      To install Node.js v22, run:
       ```bash
-      brew install node@20
+      brew install node@22
       ```
 
       Check if Node.js was installed correctly by running:
@@ -116,7 +116,7 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
       | `outputVariablesToAttributesMap` | Map of GenerativeAgent output variables to Amazon Connect attributes (User Defined)                                                                                                        |
       | `asapp.apiHost`                  | Provided by ASAPP. The API host endpoint, which the system interacts with.                                                                                                                 |
       | `asapp.apiId`                    | Provided by ASAPP. The API ID for authentication and access to the API.                                                                                                                    |
-      | `asapp.apiSecret`                | Provided by ASAPP. The API secret or authentication and access to the API.                                                                                                                 |
+      | `asapp.apiSecret`                | Provided by   ASAPP. The API secret or authentication and access to the API.                                                                                                                 |
       | `asapp.assumingRoleArn`          | Provided by ASAPP. The ARN of the IAM role that your system will assume to interact with ASAPP services.                                                                                   |
 
 

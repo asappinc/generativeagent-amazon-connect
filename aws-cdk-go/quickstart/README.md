@@ -105,18 +105,19 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
       }
       ```
 
-      | Property                         | Description                                                                                              |
-      | -------------------------------- | -------------------------------------------------------------------------------------------------------- |
-      | `accountId`                      | Your AWS account ID.                                                                                     |
-      | `region`                         | The AWS region where your Amazon Connect instance is hosted.                                             |
-      | `connectInstanceArn`             | The Amazon Resource Name (ARN) of your Amazon Connect instance that this setup is interacting with.      |
-      | `objectPrefix`                   | Prefix for AWS objects created by CDK stack, default value - `generativeagent-quickstart-`               |
-      | `attributesToInputVariablesMap`  | Map of Amazon Connect attributes (User Defined) to GenerativeAgent input variables                       |
-      | `outputVariablesToAttributesMap` | Map of GenerativeAgent output variables to Amazon Connect attributes (User Defined)                      |
-      | `asapp.apiHost`                  | Provided by ASAPP. The API host endpoint, which the system interacts with.                               |
-      | `asapp.apiId`                    | Provided by ASAPP. The API ID for authentication and access to the API.                                  |
-      | `asapp.apiSecret`                | Provided by ASAPP. The API secret or authentication and access to the API.                               |
-      | `asapp.assumingRoleArn`          | Provided by ASAPP. The ARN of the IAM role that your system will assume to interact with ASAPP services. |
+      | Property                         | Description                                                                                                                                                                                |
+      | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+      | `accountId`                      | Your AWS account ID.                                                                                                                                                                       |
+      | `region`                         | The AWS region where your Amazon Connect instance is hosted.                                                                                                                               |
+      | `connectInstanceArn`             | The Amazon Resource Name (ARN) of your Amazon Connect instance that this setup is interacting with.                                                                                        |
+      | `objectPrefix`                   | Prefix for AWS objects created by CDK stack, default value - `generativeagent-quickstart-`                                                                                                 |
+      | `useExistingVpcId`               | Existing VPC Id to use instead of creating a new one. Default is "", which means new VPC will be created. If specified, it must exist and have at least 2 private subnets (no IGW, no NAT) |
+      | `attributesToInputVariablesMap`  | Map of Amazon Connect attributes (User Defined) to GenerativeAgent input variables                                                                                                         |
+      | `outputVariablesToAttributesMap` | Map of GenerativeAgent output variables to Amazon Connect attributes (User Defined)                                                                                                        |
+      | `asapp.apiHost`                  | Provided by ASAPP. The API host endpoint, which the system interacts with.                                                                                                                 |
+      | `asapp.apiId`                    | Provided by ASAPP. The API ID for authentication and access to the API.                                                                                                                    |
+      | `asapp.apiSecret`                | Provided by ASAPP. The API secret or authentication and access to the API.                                                                                                                 |
+      | `asapp.assumingRoleArn`          | Provided by ASAPP. The ARN of the IAM role that your system will assume to interact with ASAPP services.                                                                                   |
 
 
    3. ### Boostrap your CDK environment

@@ -1129,7 +1129,9 @@
     },
     {
       "Parameters": {
-        "Attributes": {},
+        "Attributes": {
+          "ASAPP_Disposition": "$.Attributes.ASAPP_Disposition"
+        },
         "TargetContact": "Current"
       },
       "Identifier": "ExtractOutputVariables",

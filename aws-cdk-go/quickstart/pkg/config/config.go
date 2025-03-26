@@ -12,6 +12,7 @@ type Config struct {
 	Region             string `config:"region,required"`
 	ConnectInstanceArn string `config:"connectInstanceArn,required"`
 	ObjectPrefix       string `config:"objectPrefix"`
+	UseExistingVpcId   string `config:"useExistingVpcId"`
 
 	AttributesToInputVariablesMap  map[string]string `config:"attributesToInputVariablesMap"`
 	OutputVariablesToAttributesMap map[string]string `config:"outputVariablesToAttributesMap"`

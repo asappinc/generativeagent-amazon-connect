@@ -3,8 +3,9 @@
     "region": "",
     "connectInstanceArn": "",
     "objectPrefix": "generativeagent-quickstart-",
+    "useExistingVpcId": "",
     "asapp": {
-        "apiHost": "",
+        "apiHost": "https://api.sandbox.asapp.com",
         "apiId": "",
         "apiSecret": "",
         "assumingRoleArn": ""

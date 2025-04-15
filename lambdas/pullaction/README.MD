@@ -18,7 +18,8 @@ The following environment variables must be configured for this Lambda function 
 1. Receives a contact flow event from Amazon Connect
 2. Extracts relevant data from the parameters, specifically guid and companyMarker
 3. Poll Redis for next action for this call
-4. Returns a response with next action (or lack of thereof)
+4. Perform text replacement for `speak` action as specified in `ssmlConversion.mjs` (if specified) and add `<speak>`/`</speak>` surrounding tags (if any conversions specified)
+5. Returns a response with next action (or lack of thereof)
 
 ## Packaging code into archive
 To package the code and dependencies into single zip archive for uploading to AWS:

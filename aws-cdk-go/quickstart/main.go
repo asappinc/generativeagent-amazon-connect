@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/asappinc/generativeagent-amazon-connect/pkg/config"
 	"github.com/asappinc/generativeagent-amazon-connect/pkg/quickstart"
@@ -25,6 +26,8 @@ func main() {
 	}
 	jsonConfig, _ := json.MarshalIndent(cfg, "", "  ")
 	fmt.Printf("Loaded configuration:\n%+v\n", string(jsonConfig))
+
+	prepareStagingDirectory()
 
 	quickstart.NewQuickStartGenerativeAgentStack(app, fmt.Sprintf("%sstack", cfg.ObjectPrefix), &quickstart.AmazonConnectDemoCdkStackProps{
 		StackProps: awscdk.StackProps{
@@ -72,4 +75,41 @@ func loadConfiguration(envName string) (*config.Config, error) {
 	}
 	err := loader.Load(context.Background(), &cfg)
 	return &cfg, err
+}
+
+func prepareStagingDirectory() {
+	// Create the staging directory if it doesn't exist
+	stagingDir := "staging"
+
+	// Delete directory if it exists
+	if _, err := os.Stat(stagingDir); !os.IsNotExist(err) {
+		err := os.RemoveAll(stagingDir)
+		if err != nil {
+			log.Fatalf("Failed to delete existing staging directory: %v", err)
+		}
+	}
+	// Create the staging directory
+	err := os.Mkdir(stagingDir, 0755)
+	if err != nil {
+		log.Fatalf("Failed to create staging directory: %v", err)
+	}
+
+	err = os.MkdirAll(stagingDir+"/lambdas", 0755)
+	if err != nil {
+		log.Fatalf("Failed to create lambdas directory: %v", err)
+	}
+
+	// Copy all directories from ../../lambdas into staging directory
+	lambdasSourceDir := "../../lambdas"
+	// Check if source directory exists
+	if _, err := os.Stat(lambdasSourceDir); os.IsNotExist(err) {
+		log.Fatalf("Source directory %s does not exist: %v", lambdasSourceDir, err)
+	}
+
+	lambdaDir := os.DirFS(lambdasSourceDir)
+	err = os.CopyFS(stagingDir+"/lambdas", lambdaDir)
+	if err != nil {
+		log.Fatalf("Failed to copy lambda directories: %v", err)
+	}
+
 }

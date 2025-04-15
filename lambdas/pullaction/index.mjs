@@ -1,5 +1,5 @@
 import * as redis from 'redis'
-
+import {default as ssmlConversions} from './ssmlConversions.mjs';
 const redisTTLSeconds = 21600;
 /*
 {
@@ -131,7 +131,7 @@ export const handler = async (event) => {
         switch (nextAction.action) {
             case 'speak':
                 response.next = nextAction.action;
-                response.text = nextAction.speakParams.text;
+                response.text = ssmlConvert(nextAction.speakParams.text);
                 return response
             case 'transferToAgent':
             case 'transferToSystem':
@@ -161,3 +161,26 @@ export const handler = async (event) => {
     return response;
 
 };
+
+
+function ssmlConvert(text) {
+    let ssmlText = text;
+    let convertToSSML = false;
+    let ret = text;
+    if (ssmlConversions && ssmlConversions.length > 0) {
+        convertToSSML = true;
+
+        for (const conversion of ssmlConversions) {
+            const searchFor = RegExp(conversion.searchFor, 'gi');
+            if (ssmlText.match(searchFor)) {
+                ssmlText = ssmlText.replaceAll(searchFor, conversion.replaceWith);
+            }
+        }
+    }
+
+    if (convertToSSML) {
+        ret = `<speak>${ssmlText}</speak>`;
+    }
+
+    return ret;
+}

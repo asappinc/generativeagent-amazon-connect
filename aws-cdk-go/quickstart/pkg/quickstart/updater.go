@@ -100,5 +100,51 @@ func UpdateExtractOutputVariables(data *orderedmap.OrderedMap, outputVariablesTo
 		break
 
 	}
+}
 
+//	{
+//		"Parameters": {
+//		  "Text": "$.External.text"
+//		},
+//		"Identifier": "SpeakResponse",
+//		"Type": "MessageParticipant",
+//		"Transitions": {
+//		  "NextAction": "PullAction",
+//		  "Errors": [
+//			{
+//			  "NextAction": "SetErrorMessage3",
+//			  "ErrorType": "NoMatchingError"
+//			}
+//		  ]
+//		}
+//	 }
+func UpdateSpeakResponseToSSML(data *orderedmap.OrderedMap) {
+	actions, ok := data.Get("Actions")
+	if !ok {
+		return
+	}
+
+	for _, val := range actions.([]any) {
+		action := val.(orderedmap.OrderedMap)
+		identifier, ok := action.Get("Identifier")
+		if !ok || identifier.(string) != "SpeakResponse" {
+			continue
+		}
+
+		parameters, ok := action.Get("Parameters")
+		if !ok {
+			break
+		}
+		parametersMap := parameters.(orderedmap.OrderedMap)
+		text, ok := parametersMap.Get("Text")
+		if !ok {
+			break
+		}
+		parametersMap.Set("SSML", text)
+		parametersMap.Delete("Text")
+
+		action.Set("Parameters", parametersMap)
+		break
+
+	}
 }

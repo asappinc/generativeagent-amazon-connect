@@ -11,5 +11,6 @@
         "assumingRoleArn": ""
     },
     "attributesToInputVariablesMap": {},
-    "outputVariablesToAttributesMap": {}
+    "outputVariablesToAttributesMap": {},
+    "ssmlConversions": []
 }

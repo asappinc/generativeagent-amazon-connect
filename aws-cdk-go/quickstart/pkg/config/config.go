@@ -16,6 +16,12 @@ type Config struct {
 
 	AttributesToInputVariablesMap  map[string]string `config:"attributesToInputVariablesMap"`
 	OutputVariablesToAttributesMap map[string]string `config:"outputVariablesToAttributesMap"`
+	SSMLConversions                []SSMLConversion  `config:"ssmlConversions"`
 
 	Asapp AsappConfig
+}
+
+type SSMLConversion struct {
+	SearchFor   string `json:"searchFor"`
+	ReplaceWith string `json:"replaceWith"`
 }

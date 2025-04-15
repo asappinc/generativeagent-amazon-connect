@@ -244,11 +244,12 @@
           "guid": true
         }
       },
-      "51dac188-6a3c-4219-b536-3dbbaf28efa6": {
+      "SpeakResponse": {
         "position": {
           "x": 2226.4,
           "y": -554.4
         },
+        "isFriendlyName": true,
         "parameters": {
           "Text": {
             "useDynamic": true
@@ -909,7 +910,7 @@
       "Parameters": {
         "Text": "$.External.text"
       },
-      "Identifier": "51dac188-6a3c-4219-b536-3dbbaf28efa6",
+      "Identifier": "SpeakResponse",
       "Type": "MessageParticipant",
       "Transitions": {
         "NextAction": "PullAction",
@@ -991,7 +992,7 @@
             }
           },
           {
-            "NextAction": "51dac188-6a3c-4219-b536-3dbbaf28efa6",
+            "NextAction": "SpeakResponse",
             "Condition": {
               "Operator": "Equals",
               "Operands": [

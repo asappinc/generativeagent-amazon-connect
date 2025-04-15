@@ -23,6 +23,8 @@ Please see the official [integration documentation](https://docs.asapp.com/gener
        -  Wait400msPrompt   --> asappSilence400ms
        -  Wait1sPrompt      --> asappSilence1s
        -  PlayBeepBopShort  --> asappBeepBop
+   4. If any SSML conversions were specified in pullAction lambda, locate the `SpeakResponse` flow block and change it's setting to interpret text as SSML (by default it's set to Interpret as Text)
+  
 
 
 

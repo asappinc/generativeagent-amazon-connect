@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0] - 2024-04-15
+### Added
+ - Add support to specify SSML text replacements for text returned by GenerativeAgent
+
+### Changed
+ - CDK: Prefix prompt names with overall prefix suffix 
+
 ## [1.0.2] - 2024-03-26
 ### Changed
  - CDK: Set Engage lambda timeout to 15 seconds to account for delays in cross region scenarios

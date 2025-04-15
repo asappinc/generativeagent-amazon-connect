@@ -42,14 +42,15 @@ const (
 	promptsPath = "../../flow-modules/prompts"
 
 	// Lambda paths
-	engageLambdaDir                           = "../../lambdas/engage"
+	engageLambdaDir                           = "staging/lambdas/engage"
 	engageLambdaIndexPath                     = engageLambdaDir + "/index.mjs"
 	engageLambdaAttributeToInputVariablesPath = engageLambdaDir + "/attributesToInputVariables.mjs"
 	engageLambdaLockPath                      = engageLambdaDir + "/package-lock.json"
-	pullActionLambdaDir                       = "../../lambdas/pullaction"
+	pullActionLambdaDir                       = "staging/lambdas/pullaction"
 	pullActionLambdaIndexPath                 = pullActionLambdaDir + "/index.mjs"
 	pullActionLambdaLockPath                  = pullActionLambdaDir + "/package-lock.json"
-	pushActionLambdaDir                       = "../../lambdas/pushaction"
+	pullActionSSMLConversionsPath             = pullActionLambdaDir + "/ssmlConversions.mjs"
+	pushActionLambdaDir                       = "staging/lambdas/pushaction"
 	pushActionLambdaIndexPath                 = pushActionLambdaDir + "/index.mjs"
 	pushActionLambdaLockPath                  = pushActionLambdaDir + "/package-lock.json"
 
@@ -181,7 +182,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 				Action:  jsii.String("CreatePrompt"),
 				Parameters: map[string]interface{}{
 					"InstanceId":  jsii.String(cfg.ConnectInstanceArn),
-					"Name":        jsii.String("asappBeepBop2"),
+					"Name":        generateObjectName(cfg, "asappBeepBop"),
 					"S3Uri":       beepbopUrl,
 					"Description": jsii.String("Short BeepBop no silence"),
 				},
@@ -215,7 +216,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 				Action:  jsii.String("CreatePrompt"),
 				Parameters: map[string]interface{}{
 					"InstanceId":  jsii.String(cfg.ConnectInstanceArn),
-					"Name":        jsii.String("asappSilence1second2"),
+					"Name":        generateObjectName(cfg, "asappSilence1second"),
 					"S3Uri":       silence1secondUrl,
 					"Description": jsii.String("One second silence"),
 				},
@@ -249,7 +250,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 				Action:  jsii.String("CreatePrompt"),
 				Parameters: map[string]interface{}{
 					"InstanceId":  jsii.String(cfg.ConnectInstanceArn),
-					"Name":        jsii.String("asappSilence400ms2"),
+					"Name":        generateObjectName(cfg, "asappSilence400ms"),
 					"S3Uri":       silence400msUrl,
 					"Description": jsii.String("Silence for 400ms"),
 				},
@@ -460,6 +461,19 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 
 	associateEngageLambdaWithConnect.Node().AddDependency(engageLambdaFunction)
 
+	ssmlConversionsFile, err := os.Create(pullActionSSMLConversionsPath)
+	if err != nil {
+		log.Fatalf("Failed to create ssmlConversionsFile: %v", err)
+		return nil
+	}
+	defer ssmlConversionsFile.Close()
+	err = writeSSMLConversionsFile(ssmlConversionsFile, cfg.SSMLConversions)
+	if err != nil {
+		log.Fatalf("Failed to write to ssmlConversionsFile: %v", err)
+		return nil
+
+	}
+
 	// PullAction: this function needs access to the Redis Cluster, so it needs to be on the same VPC.
 	pullActionLambdaFunction := awslambdanodejs.NewNodejsFunction(stack, generateObjectName(cfg, "lambda-pullaction"), &awslambdanodejs.NodejsFunctionProps{
 		FunctionName:     generateObjectName(cfg, "lambda-pullaction"),
@@ -623,6 +637,12 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 
 	// Update Output Variables
 	UpdateExtractOutputVariables(&contactFlowModuleContentMap, cfg.OutputVariablesToAttributesMap)
+
+	// Update SpeakResponse in module if SSML conversions are provided
+	if len(cfg.SSMLConversions) != 0 {
+		UpdateSpeakResponseToSSML(&contactFlowModuleContentMap)
+
+	}
 
 	contactFlowModuleContent, err = json.MarshalIndent(contactFlowModuleContentMap, "", "  ")
 	if err != nil {

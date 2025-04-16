@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.1] - 2024-04-16
+### Changed
+ - Readme update with SSML text replacement documentation
+
 ## [1.1.0] - 2024-04-15
 ### Added
  - Add support to specify SSML text replacements for text returned by GenerativeAgent

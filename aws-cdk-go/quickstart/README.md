@@ -101,7 +101,8 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
             "assumingRoleArn": ""
          },
          "attributesToInputVariablesMap":   {},
-         "outputVariablesToAttributesMap": {}
+         "outputVariablesToAttributesMap": {},
+         "ssmlConversions": []
       }
       ```
 
@@ -114,10 +115,27 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
       | `useExistingVpcId`               | Existing VPC Id to use instead of creating a new one. Default is "", which means new VPC will be created. If specified, it must exist and have at least 2 private subnets (no IGW, no NAT) |
       | `attributesToInputVariablesMap`  | Map of Amazon Connect attributes (User Defined) to GenerativeAgent input variables                                                                                                         |
       | `outputVariablesToAttributesMap` | Map of GenerativeAgent output variables to Amazon Connect attributes (User Defined)                                                                                                        |
+      | `ssmlConversions`                | List of conversions for SSML replacements (see details below)                                                                                                                              |
       | `asapp.apiHost`                  | Provided by ASAPP. The API host endpoint, which the system interacts with.                                                                                                                 |
       | `asapp.apiId`                    | Provided by ASAPP. The API ID for authentication and access to the API.                                                                                                                    |
-      | `asapp.apiSecret`                | Provided by   ASAPP. The API secret or authentication and access to the API.                                                                                                                 |
+      | `asapp.apiSecret`                | Provided by   ASAPP. The API secret or authentication and access to the API.                                                                                                               |
       | `asapp.assumingRoleArn`          | Provided by ASAPP. The ARN of the IAM role that your system will assume to interact with ASAPP services.                                                                                   |
+
+
+      #### SSML conversions
+      Sometimes pronounciation of certain words needs to be customized which can be done using SSML (if the Amazon Polly voice used supports it). In these cases a list of ssmlConversions that specifies the `searchFor` and `replaceWith` values will make CDK provision the PullAction lambda with those parameters, so when `speak` action is returned by GenerativeAgent, the text returned by GenerativeAgent will be scanned for value of `searchFor` and replaced with the value of `replaceWith` for each element in the ssmlConversions parameter. If ssmlConversions is not an empty list, the overall text will also be enclosed into `<speak>`/`</speak>` tags and the flow module block that speaks the text will be set to interpret text as SSML.
+
+      Sample ssmlConversions value:
+      ```
+      [
+        {
+            "searchFor": "ASAPP",
+            "replaceWith": "<phoneme alphabet=\"ipa\" ph=\"eɪˈsæp\">ASAPP</phoneme>"
+        }
+      ]   
+      ```
+      Note escaping of the quotes, since quotes are used in JSON as terminators. Not all voices support all SSML tags, check https://docs.aws.amazon.com/polly/latest/dg/supportedtags.html for details. 
+      SSML tags for English US are described at https://docs.aws.amazon.com/polly/latest/dg/ph-table-english-us.html
 
 
    3. ### Boostrap your CDK environment
@@ -156,6 +174,8 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
 
    The `cdk destroy` command removes all the resources provisioned by the CDK code.
 
-      cdk destroy
-
+   ```shell
+   cdk destroy --context envName=<envName>
+   ```
+   
    > <b>Important:</b> Make sure to destroy the stack when you're finished with the infrastructure to prevent unnecessary costs.

@@ -18,10 +18,17 @@ type Config struct {
 	OutputVariablesToAttributesMap map[string]string `config:"outputVariablesToAttributesMap"`
 	SSMLConversions                []SSMLConversion  `config:"ssmlConversions"`
 
-	Asapp AsappConfig
+	Asapp                        AsappConfig
+	LambdaProvisionedConcurrency LambdaProvisionedConcurencyConfig `config:"lambdaProvisionedConcurrency"`
 }
 
 type SSMLConversion struct {
 	SearchFor   string `json:"searchFor"`
 	ReplaceWith string `json:"replaceWith"`
+}
+
+type LambdaProvisionedConcurencyConfig struct {
+	EngageProvisionedConcurrency     int `config:"engageProvisionedConcurrency"`
+	PushActionProvisionedConcurrency int `config:"pushActionProvisionedConcurrency"`
+	PullActionProvisionedConcurrency int `config:"pullActionProvisionedConcurrency"`
 }

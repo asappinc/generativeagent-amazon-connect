@@ -13,6 +13,15 @@ export type AmazonConnectParams = {
 }
 
 export type LambdaResponse = {
-    ok: boolean
-    asappStatusCode?: number
+    result: "success" | "error"
+    asappStatusCode?: number,
+    asappErrorResponse: AsappErrorResponse
+    errorMessage?: string
+}
+
+
+export type AsappErrorResponse = {
+    requestId: string
+    message: string
+    code: string
 }

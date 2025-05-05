@@ -12,5 +12,10 @@
     },
     "attributesToInputVariablesMap": {},
     "outputVariablesToAttributesMap": {},
-    "ssmlConversions": []
+    "ssmlConversions": [],
+    "lambdaProvisionedConcurrency": {
+        "engageProvisionedConcurrency": 0,
+        "pushActionProvisionedConcurrency": 0,
+        "pullActionProvisionedConcurrency": 0
+    }
 }

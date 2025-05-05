@@ -56,6 +56,8 @@ const (
 
 	// Template paths
 	contactFlowModulePath = "../../flow-modules/template/ASAPPGenerativeAgent.json"
+
+	lambdaFunctionAlias = "prod"
 )
 
 func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, props *AmazonConnectDemoCdkStackProps, cfg *config.Config) awscdk.Stack {
@@ -87,6 +89,50 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 		fmt.Println("Error:", err)
 	}
 
+	// custom resource IAM role/policy for CDK created Lambda functions to call AWS SDK
+	customResourceRole := awsiam.NewRole(stack, generateObjectName(cfg, "custom-resource-role"), &awsiam.RoleProps{
+		RoleName:  generateObjectName(cfg, "custom-resource-role"),
+		AssumedBy: awsiam.NewServicePrincipal(jsii.String("lambda.amazonaws.com"), nil),
+	})
+
+	customResourcesPolicy := awsiam.NewPolicy(stack, generateObjectName(cfg, "custom-resource-policy"), &awsiam.PolicyProps{
+		PolicyName: generateObjectName(cfg, "custom-resource-policy"),
+		Statements: &[]awsiam.PolicyStatement{
+			// Access Amazon Connect settings to create/disassociate the Kinesis Video Stream, give access to S3 bucket and read KMS key
+			awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
+				Actions: jsii.Strings(
+					"connect:AssociateInstanceStorageConfig",
+					"connect:DisassociateInstanceStorageConfig",
+					"ds:DescribeDirectories",
+					"iam:PutRolePolicy",
+					"kms:DescribeKey",
+				),
+				Resources: jsii.Strings("*"),
+			}),
+			// Access Amazon Connect to create/delete prompts and read S3 bucket where prompt files are stored
+			awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
+				Actions: jsii.Strings(
+					"connect:CreatePrompt",
+					"connect:DeletePrompt",
+					"s3:GetObject",
+					"s3:ListBucket",
+				),
+				Resources: jsii.Strings("*"),
+			}),
+			// Access Amazon Connect to associate/disassociate Lambda functions and add resource permission to Lambda function
+			awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
+				Actions: jsii.Strings(
+					"connect:AssociateLambdaFunction",
+					"connect:DisassociateLambdaFunction",
+					"lambda:AddPermission",
+				),
+				Resources: jsii.Strings("*"),
+			}),
+		},
+	})
+
+	customResourceRole.AttachInlinePolicy(customResourcesPolicy)
+
 	kinesisPrefixExists := false
 	kinesisVideoStreamConfigPrefix := ""
 	kinesisVideoKMSKeyArn := ""
@@ -103,7 +149,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 
 	if !kinesisPrefixExists { // If the Kinesis prefix doesn't exist, create it using a AWS Custom Resource call
 		kinesisVideoStreamConfigPrefix = cfg.ObjectPrefix
-		customresources.NewAwsCustomResource(stack, jsii.String("EnableKinesisPrefix"), &customresources.AwsCustomResourceProps{
+		kinesisPrefixResource := customresources.NewAwsCustomResource(stack, jsii.String("EnableKinesisPrefix"), &customresources.AwsCustomResourceProps{
 			OnCreate: &customresources.AwsSdkCall{
 				Service: jsii.String("Connect"),
 				Action:  jsii.String("AssociateInstanceStorageConfig"),
@@ -132,19 +178,9 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 					"ResourceType":  "MEDIA_STREAMS",
 					"AssociationId": customresources.NewPhysicalResourceIdReference()},
 			},
-			Policy: customresources.AwsCustomResourcePolicy_FromStatements(&[]awsiam.PolicyStatement{
-				awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
-					Actions: jsii.Strings(
-						"connect:AssociateInstanceStorageConfig",
-						"connect:DisassociateInstanceStorageConfig",
-						"ds:DescribeDirectories",
-						"iam:PutRolePolicy",
-						"kms:DescribeKey",
-					),
-					Resources: jsii.Strings("*"),
-				}),
-			}),
+			Role: customResourceRole,
 		})
+		kinesisPrefixResource.Node().AddDependency(customResourceRole, customResourcesPolicy)
 	}
 
 	// -- Setup the Prompts --
@@ -196,17 +232,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 					"PromptId":   customresources.NewPhysicalResourceIdReference(),
 				},
 			},
-			Policy: customresources.AwsCustomResourcePolicy_FromStatements(&[]awsiam.PolicyStatement{
-				awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
-					Actions: jsii.Strings(
-						"connect:CreatePrompt",
-						"connect:DeletePrompt",
-						"s3:GetObject",
-						"s3:ListBucket",
-					),
-					Resources: jsii.Strings("*"),
-				}),
-			}),
+			Role: customResourceRole,
 		})
 
 	createSilence1secondPrompt := customresources.NewAwsCustomResource(stack, generateObjectName(cfg, "create-prompt-asappSilence1second"),
@@ -230,17 +256,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 					"PromptId":   customresources.NewPhysicalResourceIdReference(),
 				},
 			},
-			Policy: customresources.AwsCustomResourcePolicy_FromStatements(&[]awsiam.PolicyStatement{
-				awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
-					Actions: jsii.Strings(
-						"connect:CreatePrompt",
-						"connect:DeletePrompt",
-						"s3:GetObject",
-						"s3:ListBucket",
-					),
-					Resources: jsii.Strings("*"),
-				}),
-			}),
+			Role: customResourceRole,
 		})
 
 	createSilence400msPrompt := customresources.NewAwsCustomResource(stack, generateObjectName(cfg, "create-prompt-asappSilence400ms"),
@@ -264,23 +280,13 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 					"PromptId":   customresources.NewPhysicalResourceIdReference(),
 				},
 			},
-			Policy: customresources.AwsCustomResourcePolicy_FromStatements(&[]awsiam.PolicyStatement{
-				awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
-					Actions: jsii.Strings(
-						"connect:CreatePrompt",
-						"connect:DeletePrompt",
-						"s3:GetObject",
-						"s3:ListBucket",
-					),
-					Resources: jsii.Strings("*"),
-				}),
-			}),
+			Role: customResourceRole,
 		})
 
-	// Wait for the audio files to be uploaded before creating the Prompts
-	createBeepbopShortPrompt.Node().AddDependency(s3BucketDeployment)
-	createSilence1secondPrompt.Node().AddDependency(s3BucketDeployment)
-	createSilence400msPrompt.Node().AddDependency(s3BucketDeployment)
+	// Wait for the IAM role/policy to be created and the audio files to be uploaded before creating the Prompts
+	createBeepbopShortPrompt.Node().AddDependency(customResourceRole, customResourcesPolicy, s3BucketDeployment)
+	createSilence1secondPrompt.Node().AddDependency(customResourceRole, customResourcesPolicy, s3BucketDeployment)
+	createSilence400msPrompt.Node().AddDependency(customResourceRole, customResourcesPolicy, s3BucketDeployment)
 
 	beepBopShortPromptId := createBeepbopShortPrompt.GetResponseField(jsii.String("PromptId"))
 	silence1secondPromptId := createSilence1secondPrompt.GetResponseField(jsii.String("PromptId"))
@@ -447,19 +453,29 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 				"FunctionArn": engageLambdaFunction.FunctionArn(),
 			},
 		},
-		Policy: customresources.AwsCustomResourcePolicy_FromStatements(&[]awsiam.PolicyStatement{
-			awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
-				Actions: jsii.Strings(
-					"connect:AssociateLambdaFunction",
-					"connect:DisassociateLambdaFunction",
-					"lambda:AddPermission",
-				),
-				Resources: jsii.Strings("*"),
-			}),
-		}),
+		Role: customResourceRole,
 	})
 
-	associateEngageLambdaWithConnect.Node().AddDependency(engageLambdaFunction)
+	engageLambdaVersion := engageLambdaFunction.CurrentVersion()
+
+	engageLambdaAliasProps := &awslambda.AliasProps{
+		AliasName:   jsii.String(lambdaFunctionAlias),
+		Version:     engageLambdaVersion,
+		Description: jsii.String("Production alias called by Connect"),
+	}
+
+	if cfg.LambdaProvisionedConcurrency.EngageProvisionedConcurrency > 0 {
+		engageLambdaAliasProps.ProvisionedConcurrentExecutions = jsii.Number(float64(cfg.LambdaProvisionedConcurrency.EngageProvisionedConcurrency))
+	}
+
+	engageLambdaAlias := awslambda.NewAlias(stack, jsii.String("EngageLambdaAlias"), engageLambdaAliasProps)
+	engageLambdaAlias.AddPermission(jsii.String("AmazonConnectInvokePermission"), &awslambda.Permission{
+		Principal: awsiam.NewServicePrincipal(jsii.String("connect.amazonaws.com"), nil),
+		SourceArn: jsii.String(cfg.ConnectInstanceArn),
+		Action:    jsii.String("lambda:InvokeFunction"),
+	})
+
+	associateEngageLambdaWithConnect.Node().AddDependency(engageLambdaFunction, engageLambdaAlias, customResourceRole, customResourcesPolicy)
 
 	ssmlConversionsFile, err := os.Create(pullActionSSMLConversionsPath)
 	if err != nil {
@@ -523,19 +539,28 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 				"FunctionArn": pullActionLambdaFunction.FunctionArn(),
 			},
 		},
-		Policy: customresources.AwsCustomResourcePolicy_FromStatements(&[]awsiam.PolicyStatement{
-			awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
-				Actions: jsii.Strings(
-					"connect:AssociateLambdaFunction",
-					"connect:DisassociateLambdaFunction",
-					"lambda:AddPermission",
-				),
-				Resources: jsii.Strings("*"),
-			}),
-		}),
+		Role: customResourceRole,
 	})
 
-	associatePullActionLambdaWithConnect.Node().AddDependency(pullActionLambdaFunction)
+	pullActionLambdaVersion := pullActionLambdaFunction.CurrentVersion()
+	pullActionLambdaAliasProps := &awslambda.AliasProps{
+		AliasName:   jsii.String(lambdaFunctionAlias),
+		Version:     pullActionLambdaVersion,
+		Description: jsii.String("Production alias called by Connect"),
+	}
+	if cfg.LambdaProvisionedConcurrency.PullActionProvisionedConcurrency > 0 {
+		pullActionLambdaAliasProps.ProvisionedConcurrentExecutions = jsii.Number(float64(cfg.LambdaProvisionedConcurrency.PullActionProvisionedConcurrency))
+	}
+
+	pullActionLambdaAlias := awslambda.NewAlias(stack, jsii.String("PullActionLambdaAlias"), pullActionLambdaAliasProps)
+
+	pullActionLambdaAlias.AddPermission(jsii.String("AmazonConnectInvokePermission"), &awslambda.Permission{
+		Principal: awsiam.NewServicePrincipal(jsii.String("connect.amazonaws.com"), nil),
+		SourceArn: jsii.String(cfg.ConnectInstanceArn),
+		Action:    jsii.String("lambda:InvokeFunction"),
+	})
+
+	associatePullActionLambdaWithConnect.Node().AddDependency(pullActionLambdaFunction, pullActionLambdaAlias, customResourceRole, customResourcesPolicy)
 
 	// PushAction: this function needs access to the Redis Cluster, so it needs to be on the same VPC.
 	pushActionLambdaFunction := awslambdanodejs.NewNodejsFunction(stack, generateObjectName(cfg, "lambda-pushaction"), &awslambdanodejs.NodejsFunctionProps{
@@ -563,37 +588,16 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 		},
 	})
 
-	associatePushActionLambdaWithConnect := customresources.NewAwsCustomResource(stack, jsii.String("AssociatePushActionLambdaWithConnect"), &customresources.AwsCustomResourceProps{
-		OnCreate: &customresources.AwsSdkCall{
-			Service: jsii.String("Connect"),
-			Action:  jsii.String("AssociateLambdaFunction"),
-			Parameters: map[string]interface{}{
-				"InstanceId":  jsii.String(cfg.ConnectInstanceArn),
-				"FunctionArn": pushActionLambdaFunction.FunctionArn(),
-			},
-			PhysicalResourceId: customresources.PhysicalResourceId_Of(jsii.String("AssociatePushActionLambda")),
-		},
-		OnDelete: &customresources.AwsSdkCall{
-			Service: jsii.String("Connect"),
-			Action:  jsii.String("DisassociateLambdaFunction"),
-			Parameters: map[string]interface{}{
-				"InstanceId":  jsii.String(cfg.ConnectInstanceArn),
-				"FunctionArn": pushActionLambdaFunction.FunctionArn(),
-			},
-		},
-		Policy: customresources.AwsCustomResourcePolicy_FromStatements(&[]awsiam.PolicyStatement{
-			awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
-				Actions: jsii.Strings(
-					"connect:AssociateLambdaFunction",
-					"connect:DisassociateLambdaFunction",
-					"lambda:AddPermission",
-				),
-				Resources: jsii.Strings("*"),
-			}),
-		}),
-	})
-
-	associatePushActionLambdaWithConnect.Node().AddDependency(pushActionLambdaFunction)
+	pushActionLambdaVersion := pushActionLambdaFunction.CurrentVersion()
+	pushActionLambdaAliasProps := &awslambda.AliasProps{
+		AliasName:   jsii.String(lambdaFunctionAlias),
+		Version:     pushActionLambdaVersion,
+		Description: jsii.String("Production alias called by ASAPP"),
+	}
+	if cfg.LambdaProvisionedConcurrency.PushActionProvisionedConcurrency > 0 {
+		pushActionLambdaAliasProps.ProvisionedConcurrentExecutions = jsii.Number(float64(cfg.LambdaProvisionedConcurrency.PushActionProvisionedConcurrency))
+	}
+	pushActionLambdaAlias := awslambda.NewAlias(stack, jsii.String("PushActionLambdaAlias"), pushActionLambdaAliasProps)
 
 	// Read Contact Flow Module
 	contactFlowModuleContent, err := os.ReadFile(contactFlowModulePath)
@@ -628,8 +632,8 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 
 	// Setup a map with the newly created Lambda Function ARNs to be replaced in the Contact Flow Module
 	lambdaFunctionsArnMap := map[string]string{
-		"Engage":     *engageLambdaFunction.FunctionArn(),
-		"PullAction": *pullActionLambdaFunction.FunctionArn(),
+		"Engage":     *engageLambdaAlias.FunctionArn(),
+		"PullAction": *pullActionLambdaAlias.FunctionArn(),
 	}
 
 	// Update the referenced resources (Prompts and Lambda functions), then Marshal the content into the same variable.
@@ -657,9 +661,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	})
 
 	// Wait for the Prompts to be ready before proceeding to create the Contact Flow Module
-	connectModule.Node().AddDependency(createBeepbopShortPrompt)
-	connectModule.Node().AddDependency(createSilence1secondPrompt)
-	connectModule.Node().AddDependency(createSilence400msPrompt)
+	connectModule.Node().AddDependency(createBeepbopShortPrompt, createSilence1secondPrompt, createSilence400msPrompt)
 
 	// -- Create the Role: generativeagent-quickstart-access-role --
 	asappGenagentAccessRole := awsiam.NewRole(stack, generateObjectName(cfg, "access-role"), &awsiam.RoleProps{
@@ -729,6 +731,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 				},
 				Resources: &[]*string{
 					pushActionLambdaFunction.FunctionArn(),
+					pushActionLambdaAlias.FunctionArn(),
 				},
 			}),
 		},
@@ -742,7 +745,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 
 	// Output the ARN of the pushaction lambda
 	awscdk.NewCfnOutput(stack, jsii.String("pushactionlambdaarn"), &awscdk.CfnOutputProps{
-		Value: pushActionLambdaFunction.FunctionArn(),
+		Value: pushActionLambdaAlias.FunctionArn(),
 	})
 
 	return stack

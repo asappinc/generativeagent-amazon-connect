@@ -100,9 +100,11 @@ export const handler = async (event) => {
      * @type {import("./types").LambdaResponse}
      */
     const response = {
-        ok: true,
-
-    };
+        result: "success",
+        asappStatusCode: 0,
+        asappErrorResponse: null,
+        errorMessage: ""
+      };
 
     let finalStatusCode;
     try {
@@ -124,10 +126,15 @@ export const handler = async (event) => {
         if (err.response) {
             console.log(err.response.data);
             finalStatusCode = err.response.status;
+            response.errorMessage = `HTTP status ${err.response.status}`;
+            if (err.response.data?.error) {
+                response.asappErrorResponse = err.response.data.error;
+                response.errorMessage = `${err.response.data.error.code} - ${err.response.data.error.message}`;
+              }
         }
     }
 
-    response.ok = finalStatusCode < 300 ? true  : false;
+    response.result = finalStatusCode < 300 ? "success" : "error";
     response.asappStatusCode = finalStatusCode;
 
 

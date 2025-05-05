@@ -95,31 +95,40 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
          "connectInstanceArn": "",
          "objectPrefix": "generativeagent-quickstart-",
          "asapp": {
-            "apiHost": "",
+            "apiHost": "https://api.sandbox.asapp.com",
             "apiId": "",
             "apiSecret" : "",
             "assumingRoleArn": ""
          },
          "attributesToInputVariablesMap":   {},
          "outputVariablesToAttributesMap": {},
-         "ssmlConversions": []
+         "ssmlConversions": [],
+         "lambdaProvisionedConcurrency": {
+            "engageProvisionedConcurrency": 0,
+            "pushActionProvisionedConcurrency": 0,
+            "pullActionProvisionedConcurrency": 0
+         }         
       }
       ```
 
-      | Property                         | Description                                                                                                                                                                                |
-      | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-      | `accountId`                      | Your AWS account ID.                                                                                                                                                                       |
-      | `region`                         | The AWS region where your Amazon Connect instance is hosted.                                                                                                                               |
-      | `connectInstanceArn`             | The Amazon Resource Name (ARN) of your Amazon Connect instance that this setup is interacting with.                                                                                        |
-      | `objectPrefix`                   | Prefix for AWS objects created by CDK stack, default value - `generativeagent-quickstart-`                                                                                                 |
-      | `useExistingVpcId`               | Existing VPC Id to use instead of creating a new one. Default is "", which means new VPC will be created. If specified, it must exist and have at least 2 private subnets (no IGW, no NAT) |
-      | `attributesToInputVariablesMap`  | Map of Amazon Connect attributes (User Defined) to GenerativeAgent input variables                                                                                                         |
-      | `outputVariablesToAttributesMap` | Map of GenerativeAgent output variables to Amazon Connect attributes (User Defined)                                                                                                        |
-      | `ssmlConversions`                | List of conversions for SSML replacements (see details below)                                                                                                                              |
-      | `asapp.apiHost`                  | Provided by ASAPP. The API host endpoint, which the system interacts with.                                                                                                                 |
-      | `asapp.apiId`                    | Provided by ASAPP. The API ID for authentication and access to the API.                                                                                                                    |
-      | `asapp.apiSecret`                | Provided by   ASAPP. The API secret or authentication and access to the API.                                                                                                               |
-      | `asapp.assumingRoleArn`          | Provided by ASAPP. The ARN of the IAM role that your system will assume to interact with ASAPP services.                                                                                   |
+      | Property                                                        | Description                                                                                                                                                                                |
+      | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+      | `accountId`                                                     | Your AWS account ID.                                                                                                                                                                       |
+      | `region`                                                        | The AWS region where your Amazon Connect instance is hosted.                                                                                                                               |
+      | `connectInstanceArn`                                            | The Amazon Resource Name (ARN) of your Amazon Connect instance that this setup is interacting with.                                                                                        |
+      | `objectPrefix`                                                  | Prefix for AWS objects created by CDK stack, default value - `generativeagent-quickstart-`                                                                                                 |
+      | `useExistingVpcId`                                              | Existing VPC Id to use instead of creating a new one. Default is "", which means new VPC will be created. If specified, it must exist and have at least 2 private subnets (no IGW, no NAT) |
+      | `attributesToInputVariablesMap`                                 | Map of Amazon Connect attributes (User Defined) to GenerativeAgent input variables                                                                                                         |
+      | `outputVariablesToAttributesMap`                                | Map of GenerativeAgent output variables to Amazon Connect attributes (User Defined)                                                                                                        |
+      | `ssmlConversions`                                               | List of conversions for SSML replacements (see details below)                                                                                                                              |
+      | `lambdaProvisionedConcurrency`                                  | Provisioned concurrency for Lambda functions, used eliminate Lambda environment initialization delay that could be up to 500ms                                                             |
+      | `lambdaProvisionedConcurrency.engageProvisionedConcurrency`     | Engage Lambda function provisioned concurrency - minimizes initial connection to GenerativeAgent delay - default is 0, meaning no provisioned concurrency                                  |
+      | `lambdaProvisionedConcurrency.pushActionProvisionedConcurrency` | PushAction Lambda function provisioned concurrency - minimizes delay for GenerativeAgent to let Amazon Connect know about next action - default is 0, meaning no provisioned concurrency   |
+      | `lambdaProvisionedConcurrency.pullActionProvisionedConcurrency` | PullAction Lambda function provisioned concurrency - minimizes delay for GenerativeAgent to let Amazon Connect know about next action - default is 0, meaning no provisioned concurrency   |
+      | `asapp.apiHost`                                                 | Provided by ASAPP. The API host endpoint, which the system interacts with.                                                                                                                 |
+      | `asapp.apiId`                                                   | Provided by ASAPP. The API ID for authentication and access to the API.                                                                                                                    |
+      | `asapp.apiSecret`                                               | Provided by   ASAPP. The API secret or authentication and access to the API.                                                                                                               |
+      | `asapp.assumingRoleArn`                                         | Provided by ASAPP. The ARN of the IAM role that your system will assume to interact with ASAPP services.                                                                                   |
 
 
       #### SSML conversions

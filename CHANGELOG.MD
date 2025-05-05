@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.0] - 2024-05-05
+### Added
+ - Flow Module: Handle failures during Engage API call
+ - Lambdas: Refactor outputs from Engage Lambda so Connect can act on failures
+ - CDK: Provision Lambdas with version, alias and optional provisioned concurrency settings
+ - CDK: Explicitly create IAM role/policy used for custom resources (like Connect prompts) to avoid intermittent race conditions
+
 ## [1.1.1] - 2024-04-16
 ### Changed
  - Readme update with SSML text replacement documentation

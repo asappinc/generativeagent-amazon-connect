@@ -1,6 +1,6 @@
-import * as redis from 'redis'
+import { GlideClient, Transaction } from "@valkey/valkey-glide";
 
-const redisTTLSeconds = 21600;
+const valkeyTTLSeconds = 21600;
 
 /*
 {
@@ -34,16 +34,32 @@ export const handler = async (event) => {
 
     let client;
     try {
-        client = await redis.createClient({
-            url: process.env['REDIS_URL']
-        })
-            .on('error', err => console.log('Redis Client Error', err))
-            .connect();
+        const valkeyHost = process.env['VALKEY_HOST'];
+        if (!valkeyHost) {
+            throw new Error("VALKEY_HOST environment variable must be set");
+        }
 
+        const valkeyPort = process.env['VALKEY_PORT'];
+        if (!valkeyPort) {
+            throw new Error("VALKEY_PORT environment variable must be set");
+        }
+
+        const host = valkeyHost;
+        const port = parseInt(valkeyPort, 10) || 6379;
+
+        client = await GlideClient.createClient({
+            addresses: [
+                {
+                    host: host,
+                    port: port,
+                },
+            ],
+            clientName: "pushaction_client",
+        });
     } catch (err) {
         return {
             ok: false,
-            errorMessage: `error connecting to redis - ${err}`
+            errorMessage: `error connecting to Valkey - ${err}`
         }
 
     }
@@ -58,8 +74,10 @@ export const handler = async (event) => {
             case 'processingStart':
             case 'processingEnd':
             case 'disengage':
-                await client.multi().rPush(key, JSON.stringify(event)).expire(key, redisTTLSeconds).exec();
-                await client.quit()
+                const transaction = new Transaction();
+                transaction.rpush(key, JSON.stringify(event));
+                transaction.expire(key, valkeyTTLSeconds);
+                await client.exec(transaction);
                 break;
 
             default:
@@ -72,11 +90,12 @@ export const handler = async (event) => {
         return {
             ok: false,
             errorMessage: `error processing action ${event.action} - ${err}`
+        };
+    } finally {
+        if (client && !client.isClosed) {
+            client.close();
         }
-
-
     }
 
     return { ok: true };
-
 };

@@ -74,6 +74,20 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
       esbuild --version
       ```
 
+   6. ### **Docker**
+
+      Docker is required for building Lambda functions with native dependencies. Make sure Docker is installed and running before deploying the CDK stack.
+
+      To install Docker, run:
+      ```bash
+      brew install --cask docker
+      ```
+
+      After installation, start Docker and verify it is running:
+      ```bash
+      docker --version
+      ```
+
 <br />
 
 > ## Setup the environment
@@ -86,7 +100,7 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
 
    2. ### Complete the configuration file
 
-      Before deploying the infrastructure, you need to provide a valid configuration file by editing  `config.sample.json` file located at the root level of the project. This file provides necessary environment details, and must follow the structure outlined below:
+      Before deploying the infrastructure, you need to provide a valid configuration file by editing the `config.sample.json` file located at the root level of the project. This file provides necessary environment details, and must follow the structure outlined below:
 
       ```json
       {
@@ -94,13 +108,18 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
          "region": "",
          "connectInstanceArn": "",
          "objectPrefix": "generativeagent-quickstart-",
+         "useExistingVpcId": "",
          "asapp": {
             "apiHost": "https://api.sandbox.asapp.com",
             "apiId": "",
             "apiSecret" : "",
             "assumingRoleArn": ""
          },
-         "attributesToInputVariablesMap":   {},
+         "valkeyParameters": {
+            "cacheNodeType": "cache.t4g.micro",
+            "replicaNodesCount": 1
+         },
+         "attributesToInputVariablesMap": {},
          "outputVariablesToAttributesMap": {},
          "ssmlConversions": [],
          "lambdaProvisionedConcurrency": {
@@ -127,9 +146,10 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
       | `lambdaProvisionedConcurrency.pullActionProvisionedConcurrency` | PullAction Lambda function provisioned concurrency - minimizes delay for GenerativeAgent to let Amazon Connect know about next action - default is 0, meaning no provisioned concurrency   |
       | `asapp.apiHost`                                                 | Provided by ASAPP. The API host endpoint, which the system interacts with.                                                                                                                 |
       | `asapp.apiId`                                                   | Provided by ASAPP. The API ID for authentication and access to the API.                                                                                                                    |
-      | `asapp.apiSecret`                                               | Provided by   ASAPP. The API secret or authentication and access to the API.                                                                                                               |
+      | `asapp.apiSecret`                                               | Provided by ASAPP. The API secret or authentication and access to the API.                                                                                                               |
       | `asapp.assumingRoleArn`                                         | Provided by ASAPP. The ARN of the IAM role that your system will assume to interact with ASAPP services.                                                                                   |
-
+      | `valkeyParameters.cacheNodeType`                                         | The instance type for the Valkey replication group (e.g., `cache.t4g.micro`). See [Amazon ElastiCache supported node types](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/CacheNodes.SupportedTypes.html) for a full list.                                                                                    |
+      | `valkeyParameters.replicaNodesCount`                                         | The number of replica nodes in the Valkey replication group (not including the primary node).                                                                                    |      
 
       #### SSML conversions
       Sometimes pronounciation of certain words needs to be customized which can be done using SSML (if the Amazon Polly voice used supports it). In these cases a list of ssmlConversions that specifies the `searchFor` and `replaceWith` values will make CDK provision the PullAction lambda with those parameters, so when `speak` action is returned by GenerativeAgent, the text returned by GenerativeAgent will be scanned for value of `searchFor` and replaced with the value of `replaceWith` for each element in the ssmlConversions parameter. If ssmlConversions is not an empty list, the overall text will also be enclosed into `<speak>`/`</speak>` tags and the flow module block that speaks the text will be set to interpret text as SSML.

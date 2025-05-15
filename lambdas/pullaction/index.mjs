@@ -1,6 +1,7 @@
-import * as redis from 'redis'
+import { GlideClient, Transaction } from "@valkey/valkey-glide";
+
 import {default as ssmlConversions} from './ssmlConversions.mjs';
-const redisTTLSeconds = 21600;
+const valkeyTTLSeconds = 21600;
 /*
 {
     "Details": {
@@ -90,15 +91,31 @@ export const handler = async (event) => {
     console.log(`Executing for guid - ${event.Details.Parameters.guid}`);
     let client;
     try {
-        client = await redis.createClient({
-            url: process.env['REDIS_URL']
-        })
-            .on('error', err => console.log('Redis Client Error', err))
-            .connect();
+        const valkeyHost = process.env['VALKEY_HOST'];
+        if (!valkeyHost) {
+            throw new Error("VALKEY_HOST environment variable must be set");
+        }
 
+        const valkeyPort = process.env['VALKEY_PORT'];
+        if (!valkeyPort) {
+            throw new Error("VALKEY_PORT environment variable must be set");
+        }
+
+        const host = valkeyHost;
+        const port = parseInt(valkeyPort, 10) || 6379;
+
+        client = await GlideClient.createClient({
+            addresses: [
+                {
+                    host: host,
+                    port: port,
+                },
+            ],
+            clientName: "pullaction_client",
+        });
     } catch (err) {
         response.next = 'error'
-        response.text = `error connecting to redis - ${err}`
+        response.text = `error connecting to Valkey - ${err}`
         return response;
 
     }
@@ -108,25 +125,27 @@ export const handler = async (event) => {
     const keyBeepBopCounter = `asappStates:beepBopCounter:${event.Details.Parameters.companyMarker}:${event.Details.Parameters.guid}`;
 
     try {
-        
-        const [beepBopCounter, expireResponse] = await client.multi().incr(keyBeepBopCounter).expire(keyBeepBopCounter, redisTTLSeconds).exec();
-        
+        const transaction = new Transaction();
+        transaction.incr(keyBeepBopCounter);
+        transaction.expire(keyBeepBopCounter, valkeyTTLSeconds);
+ 
+        const [beepBopCounter, expireResponse] = await client.exec(transaction);
+
         console.log(`beepBopCounter for ${event.Details.Parameters.guid}} is ${beepBopCounter}; expire response is ${expireResponse}`);
         response.playBeepBop = beepBopCounter % 6 == 1 ? 1 : 0;
         console.log(`set playBeepBop for guid ${event.Details.Parameters.guid}} to ${response.playBeepBop}`);
         
-
         console.log(`retrieving from next action from key ${key}`);
-        let redisResponse = await client.lPop(key);
-        console.log(redisResponse);
-        if (!redisResponse) {
+        let valkeyResponse = await client.lpop(key);
+        console.log(valkeyResponse);
+        if (!valkeyResponse) {
             return response;
         }
 
         /**
          * @type {import("./types").BaseAction}
          */
-        const nextAction = JSON.parse(redisResponse);
+        const nextAction = JSON.parse(valkeyResponse);
 
         switch (nextAction.action) {
             case 'speak':
@@ -145,21 +164,20 @@ export const handler = async (event) => {
                 response.next = nextAction.action;
                 return response
             default:
-                console.error(`unexpected action ${nextAction.action} from redis`);
+                console.error(`unexpected action ${nextAction.action} from Valkey`);
                 break;
         }
-
-
-
 
     } catch (err) {
         console.error(err);
         response.next = 'error';
         response.text = `error retrieving action for ${key} - ${err}`;
+    } finally {
+        if (client && !client.isClosed) {
+            client.close();
+        }
     }
-
     return response;
-
 };
 
 

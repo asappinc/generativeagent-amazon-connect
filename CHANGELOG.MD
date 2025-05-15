@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.0] - 2025-05-14
+### Added
+ - CDK: Migrate from Redis to Valkey replication group
+ - Lambdas: Replace Redis client with Valkey GLIDE client for Redis operations in PullAction and PushAction Lambdas
+
+### Changed 
+- CDK: Use `ForceDockerBundling` to build native dependencies for Lambdas, avoiding issues with host OS or architecture mismatches for native libraries
+
 ## [1.2.0] - 2024-05-05
 ### Added
  - Flow Module: Handle failures during Engage API call

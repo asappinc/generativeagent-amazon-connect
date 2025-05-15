@@ -1,8 +1,8 @@
 {
   "dependencies": {
-    "redis": "^4.6.14"
+    "@valkey/valkey-glide": "^1.3.4"
   },
-   "devDependencies": {
+  "devDependencies": {
     "@types/aws-lambda": "^8.10.140"
-   }
+  }
 }

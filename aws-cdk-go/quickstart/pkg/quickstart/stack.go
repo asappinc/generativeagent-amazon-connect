@@ -321,9 +321,9 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	vpcPrivateIsolatedSubnets := *vpc.IsolatedSubnets()
 
 	// -- Create the Security Groups --
-	redisSecurityGroup := awsec2.NewSecurityGroup(stack, generateObjectName(cfg, "redis-security-group"), &awsec2.SecurityGroupProps{
+	valkeySecurityGroup := awsec2.NewSecurityGroup(stack, generateObjectName(cfg, "valkey-security-group"), &awsec2.SecurityGroupProps{
 		Vpc:               vpc,
-		SecurityGroupName: generateObjectName(cfg, "redis-security-group"),
+		SecurityGroupName: generateObjectName(cfg, "valkey-security-group"),
 		AllowAllOutbound:  jsii.Bool(false),
 	})
 	pullActionLambdaSecurityGroup := awsec2.NewSecurityGroup(stack, generateObjectName(cfg, "lambda-pullaction-security-group"), &awsec2.SecurityGroupProps{
@@ -337,14 +337,14 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 		AllowAllOutbound:  jsii.Bool(false),
 	})
 
-	redisSecurityGroup.AddIngressRule(
+	valkeySecurityGroup.AddIngressRule(
 		pullActionLambdaSecurityGroup,
 		awsec2.Port_Tcp(aws.Float64(6379)),
 		jsii.String(fmt.Sprintf("Allow inbound TCP traffic only from %slambda-pullaction-security-group into the Reddis port", cfg.ObjectPrefix)),
 		jsii.Bool(false),
 	)
 
-	redisSecurityGroup.AddIngressRule(
+	valkeySecurityGroup.AddIngressRule(
 		pushActionLambdaSecurityGroup,
 		awsec2.Port_Tcp(aws.Float64(6379)),
 		jsii.String(fmt.Sprintf("Allow inbound TCP traffic only from %slambda-pushaction-security-group into the Reddis port", cfg.ObjectPrefix)),
@@ -352,44 +352,45 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 	)
 
 	pullActionLambdaSecurityGroup.AddEgressRule(
-		redisSecurityGroup,
+		valkeySecurityGroup,
 		awsec2.Port_Tcp(aws.Float64(6379)),
-		jsii.String("Allow outbound TCP traffic only to Redis security group and port"),
+		jsii.String("Allow outbound TCP traffic only to Valkey security group and port"),
 		jsii.Bool(false),
 	)
 
 	pushActionLambdaSecurityGroup.AddEgressRule(
-		redisSecurityGroup,
+		valkeySecurityGroup,
 		awsec2.Port_Tcp(aws.Float64(6379)),
-		jsii.String("Allow outbound TCP traffic only to Redis security group and port"),
+		jsii.String("Allow outbound TCP traffic only to Valkey security group and port"),
 		jsii.Bool(false),
 	)
 
-	var redisSubnetGroupSubnetIds []*string
+	var valkeySubnetGroupSubnetIds []*string
 	for _, subnet := range vpcPrivateIsolatedSubnets {
-		redisSubnetGroupSubnetIds = append(redisSubnetGroupSubnetIds, subnet.SubnetId())
+		valkeySubnetGroupSubnetIds = append(valkeySubnetGroupSubnetIds, subnet.SubnetId())
 	}
 
-	// -- Create the Redis cluster --
-	redisSubnetGroup := awselasticache.NewCfnSubnetGroup(stack, generateObjectName(cfg, "redis-subnet-group"), &awselasticache.CfnSubnetGroupProps{
-		Description: jsii.String("Subnet group for ASAPP Redis"),
-		SubnetIds:   &redisSubnetGroupSubnetIds,
+	// -- Create the Valkey replication group --
+	valkeySubnetGroup := awselasticache.NewCfnSubnetGroup(stack, generateObjectName(cfg, "valkey-subnet-group"), &awselasticache.CfnSubnetGroupProps{
+		Description: jsii.String("Subnet group for ASAPP Valkey"),
+		SubnetIds:   &valkeySubnetGroupSubnetIds,
 	})
-
-	redisCluster := awselasticache.NewCfnCacheCluster(stack, generateObjectName(cfg, "redis-cluster"), &awselasticache.CfnCacheClusterProps{
-		ClusterName:          generateObjectName(cfg, "redis-cluster"),
-		CacheNodeType:        jsii.String("cache.t4g.micro"),
-		Engine:               jsii.String("redis"),
-		NumCacheNodes:        aws.Float64(1),
-		CacheSubnetGroupName: redisSubnetGroup.Ref(),
-		VpcSecurityGroupIds:  &[]*string{redisSecurityGroup.SecurityGroupId()},
-	})
-
-	redisUrl := awscdk.Fn_Join(jsii.String(""), &[]*string{
-		jsii.String("redis://"),
-		redisCluster.AttrRedisEndpointAddress(),
-		jsii.String(":"),
-		redisCluster.AttrRedisEndpointPort(),
+	valkeyReplicationGroupId := *generateObjectName(cfg, "valkey")
+	if len(valkeyReplicationGroupId) > 40 {
+		valkeyReplicationGroupId = valkeyReplicationGroupId[:40]
+	}
+	valkeyReplicationGroup := awselasticache.NewCfnReplicationGroup(stack, generateObjectName(cfg, "valkey-repl-group"), &awselasticache.CfnReplicationGroupProps{
+		ReplicationGroupId:          jsii.String(valkeyReplicationGroupId),
+		ReplicationGroupDescription: jsii.String("ASAPP Valkey replication group"),
+		CacheNodeType:               jsii.String(cfg.ValkeyParameters.CacheNodeType),
+		Engine:                      jsii.String("valkey"),
+		NumNodeGroups:               jsii.Number(1),
+		ReplicasPerNodeGroup:        jsii.Number(cfg.ValkeyParameters.ReplicaNodesCount),
+		CacheSubnetGroupName:        valkeySubnetGroup.Ref(),
+		SecurityGroupIds:            &[]*string{valkeySecurityGroup.SecurityGroupId()},
+		AutomaticFailoverEnabled:    jsii.Bool(true),
+		TransitEncryptionEnabled:    jsii.Bool(false),
+		MultiAzEnabled:              jsii.Bool(true),
 	})
 
 	attributeToVarsFile, err := os.Create(engageLambdaAttributeToInputVariablesPath)
@@ -422,6 +423,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 			NodeModules: &[]*string{
 				jsii.String("axios"),
 			},
+			ForceDockerBundling: jsii.Bool(true),
 		},
 		Environment: &map[string]*string{
 			"ASAPP_API_HOST":   jsii.String(cfg.Asapp.ApiHost),
@@ -490,7 +492,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 
 	}
 
-	// PullAction: this function needs access to the Redis Cluster, so it needs to be on the same VPC.
+	// PullAction: this function needs access to Valkey, so it needs to be on the same VPC.
 	pullActionLambdaFunction := awslambdanodejs.NewNodejsFunction(stack, generateObjectName(cfg, "lambda-pullaction"), &awslambdanodejs.NodejsFunctionProps{
 		FunctionName:     generateObjectName(cfg, "lambda-pullaction"),
 		Entry:            jsii.String(pullActionLambdaIndexPath),
@@ -503,8 +505,9 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 				jsii.String("aws-sdk"), // aws-sdk is already included in Lambda environment
 			},
 			NodeModules: &[]*string{
-				jsii.String("redis"),
+				jsii.String("@valkey/valkey-glide"),
 			},
+			ForceDockerBundling: jsii.Bool(true),
 		},
 		Vpc: vpc,
 		VpcSubnets: &awsec2.SubnetSelection{
@@ -512,7 +515,8 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 		},
 		SecurityGroups: &[]awsec2.ISecurityGroup{pullActionLambdaSecurityGroup},
 		Environment: &map[string]*string{
-			"REDIS_URL": redisUrl,
+			"VALKEY_HOST": valkeyReplicationGroup.AttrPrimaryEndPointAddress(),
+			"VALKEY_PORT": valkeyReplicationGroup.AttrPrimaryEndPointPort(),
 		},
 	})
 	pullActionLambdaFunction.AddPermission(jsii.String("AmazonConnectInvokePermission"), &awslambda.Permission{
@@ -562,7 +566,7 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 
 	associatePullActionLambdaWithConnect.Node().AddDependency(pullActionLambdaFunction, pullActionLambdaAlias, customResourceRole, customResourcesPolicy)
 
-	// PushAction: this function needs access to the Redis Cluster, so it needs to be on the same VPC.
+	// PushAction: this function needs access to Valkey, so it needs to be on the same VPC.
 	pushActionLambdaFunction := awslambdanodejs.NewNodejsFunction(stack, generateObjectName(cfg, "lambda-pushaction"), &awslambdanodejs.NodejsFunctionProps{
 		FunctionName:     generateObjectName(cfg, "lambda-pushaction"),
 		Entry:            jsii.String(pushActionLambdaIndexPath),
@@ -575,8 +579,9 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 				jsii.String("aws-sdk"), // aws-sdk is already included in Lambda environment
 			},
 			NodeModules: &[]*string{
-				jsii.String("redis"),
+				jsii.String("@valkey/valkey-glide"),
 			},
+			ForceDockerBundling: jsii.Bool(true),
 		},
 		Vpc: vpc,
 		VpcSubnets: &awsec2.SubnetSelection{
@@ -584,7 +589,8 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 		},
 		SecurityGroups: &[]awsec2.ISecurityGroup{pushActionLambdaSecurityGroup},
 		Environment: &map[string]*string{
-			"REDIS_URL": redisUrl,
+			"VALKEY_HOST": valkeyReplicationGroup.AttrPrimaryEndPointAddress(),
+			"VALKEY_PORT": valkeyReplicationGroup.AttrPrimaryEndPointPort(),
 		},
 	})
 

@@ -7,6 +7,11 @@ type AsappConfig struct { // Asapp provided variables
 	AssumingRoleArn string `config:"asapp-assumingRoleArn,required"`
 }
 
+type ValkeyParameters struct { // Valkey configuration parameters
+	CacheNodeType     string `config:"cacheNodeType,required"`
+	ReplicaNodesCount int    `config:"replicaNodesCount,required"`
+}
+
 type Config struct {
 	AccountId          string `config:"accountId,required"`
 	Region             string `config:"region,required"`
@@ -19,6 +24,7 @@ type Config struct {
 	SSMLConversions                []SSMLConversion  `config:"ssmlConversions"`
 
 	Asapp                        AsappConfig
+	ValkeyParameters             ValkeyParameters
 	LambdaProvisionedConcurrency LambdaProvisionedConcurencyConfig `config:"lambdaProvisionedConcurrency"`
 }
 

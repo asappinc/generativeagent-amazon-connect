@@ -10,22 +10,29 @@ The following environment variables must be configured for this Lambda function 
 
 | Variable           | Description                                           |
 | ------------------ | ----------------------------------------------------- |
-| `REDIS_URL`        | URL for connection to Redis instance                  |
+| `VALKEY_HOST`      | Hostname for the Valkey instance                      |
+| `VALKEY_PORT`      | Port number for the Valkey instance                   |
 
 
 ## Function Flow
 
 1. Function is invoked by ASAPP with JSON event payload
-2. Put event payload as string to Redis
+2. Put event payload as string to Valkey
 3. Returns a response indicating success or failure
 
 
 ## Packaging code into archive
-To package the code and dependencies into single zip archive for uploading to AWS:
- * Run `npm install` to install dependencies into `node_modules` folder
- * Zip `index.mjs`, `types.d.ts` and `node_modules` into single archive
+To package the code and dependencies into a single zip archive for uploading to AWS:
+ * Use Docker to install dependencies compatible with Amazon Linux and Node.js 22:
+   ```bash
+   docker run --rm --platform linux/amd64 -v "$PWD":/var/task -w /var/task amazonlinux:2023 /bin/bash -c "
+       curl -sL https://rpm.nodesource.com/setup_22.x | bash - && \
+       yum install -y nodejs && \
+       npm install
+   "
+ * Zip `node_modules`, `index.mjs` and `types.d.ts` into a single archive
 
-Included `package.sh` script shows examples of the commands that can be run on MacOS 
+Included `package.sh` script shows examples of the commands that can be run on macOS
 
 
 ## Lambda Configuration requirements

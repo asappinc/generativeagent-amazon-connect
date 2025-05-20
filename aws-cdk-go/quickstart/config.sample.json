@@ -10,6 +10,10 @@
         "apiSecret": "",
         "assumingRoleArn": ""
     },
+    "valkeyParameters": {
+        "cacheNodeType": "cache.t4g.micro",
+        "replicaNodesCount": 1
+    },
     "attributesToInputVariablesMap": {},
     "outputVariablesToAttributesMap": {},
     "ssmlConversions": [],

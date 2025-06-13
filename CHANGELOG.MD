@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.1] - 2025-06-13
+### Added
+ - CDK: Added Dockerfile that can be used to build/run CDK in container
+
 ## [2.0.0] - 2025-05-14
 ### Added
  - CDK: Migrate from Redis to Valkey replication group

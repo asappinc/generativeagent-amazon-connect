@@ -87,6 +87,8 @@ This guide provides an implementation of the ASAPP GenerativeAgent integration g
       ```bash
       docker --version
       ```
+> ## Using Docker container
+   Included Dockerfile provides definitions to build a Docker image with all necessary dependencies as described above. See [https://www.docker.com/resources/cli-cheat-sheet/](https://www.docker.com/resources/cli-cheat-sheet/) for reference to how to build and run image. 
 
 <br />
 

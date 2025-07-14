@@ -7,7 +7,8 @@ import (
 	"github.com/iancoleman/orderedmap"
 )
 
-func UpdateResourcesARN(data *orderedmap.OrderedMap, region, accountId, connectInstanceArn string, promptArnMap, lambdaFunctionsArnMap map[string]string) {
+func UpdateResourcesARN(data *orderedmap.OrderedMap, region, accountId, connectInstanceArn string,
+	promptArnMap, lambdaFunctionsArnMap, displayNameMap map[string]string) {
 	for _, key := range data.Keys() {
 		value, _ := data.Get(key)
 		strValue, ok := value.(string)
@@ -26,6 +27,17 @@ func UpdateResourcesARN(data *orderedmap.OrderedMap, region, accountId, connectI
 				parametersValueMap.Set("LambdaFunctionARN", newLambdaFunctionValue)
 				continue
 			}
+
+			/*
+			 *	If the key is "displayName", we check if the value is in the displayNameMap and update it if it exists.
+			 *	This is useful for updating the display names of Lambda functions in the Contact Flow Module to match the actual function names.
+			 */
+			if key == "displayName" {
+				if newDisplayName, exists := displayNameMap[strValue]; exists {
+					data.Set(key, newDisplayName)
+				}
+			}
+
 			if arn.IsARN(strValue) {
 				arnValue, err := arn.Parse(strValue)
 				if err != nil {
@@ -39,12 +51,12 @@ func UpdateResourcesARN(data *orderedmap.OrderedMap, region, accountId, connectI
 		}
 		if nestedMap, ok := value.(orderedmap.OrderedMap); ok {
 			// Recursively call for nested ordered maps
-			UpdateResourcesARN(&nestedMap, region, accountId, connectInstanceArn, promptArnMap, lambdaFunctionsArnMap)
+			UpdateResourcesARN(&nestedMap, region, accountId, connectInstanceArn, promptArnMap, lambdaFunctionsArnMap, displayNameMap)
 		} else if nestedSlice, ok := value.([]interface{}); ok {
 			for _, item := range nestedSlice {
 				if itemMap, ok := item.(orderedmap.OrderedMap); ok {
 					// Recursively call for each map in the slice
-					UpdateResourcesARN(&itemMap, region, accountId, connectInstanceArn, promptArnMap, lambdaFunctionsArnMap)
+					UpdateResourcesARN(&itemMap, region, accountId, connectInstanceArn, promptArnMap, lambdaFunctionsArnMap, displayNameMap)
 				}
 			}
 		}

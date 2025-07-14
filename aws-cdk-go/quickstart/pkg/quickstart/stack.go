@@ -642,8 +642,13 @@ func NewQuickStartGenerativeAgentStack(scope constructs.Construct, id string, pr
 		"PullAction": *pullActionLambdaAlias.FunctionArn(),
 	}
 
+	displayNameMap := map[string]string{
+		"generativeagent-quickstart-lambda-genagent-engage": *engageLambdaAlias.FunctionName(),
+		"generativeagent-quickstart-lambda-pullaction":      *pullActionLambdaAlias.FunctionName(),
+	}
+
 	// Update the referenced resources (Prompts and Lambda functions), then Marshal the content into the same variable.
-	UpdateResourcesARN(&contactFlowModuleContentMap, cfg.Region, cfg.AccountId, cfg.ConnectInstanceArn, promptArnsMap, lambdaFunctionsArnMap)
+	UpdateResourcesARN(&contactFlowModuleContentMap, cfg.Region, cfg.AccountId, cfg.ConnectInstanceArn, promptArnsMap, lambdaFunctionsArnMap, displayNameMap)
 
 	// Update Output Variables
 	UpdateExtractOutputVariables(&contactFlowModuleContentMap, cfg.OutputVariablesToAttributesMap)

@@ -1,6 +1,6 @@
 {
   "dependencies": {
     "@types/aws-lambda": "^8.10.143",
-    "axios": "^1.7.4"
+    "axios": "^1.11.0"
   }
 }
